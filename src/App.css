@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@plugin "daisyui";
+/* This forces the Toastify container to jump into the same top layer as the Dialog */
+/* app.css */
+
+.Toastify__toast-container {
+  z-index: 2147483647 !important; 
+}
+
+/* Ensure the portal container itself is above the dialog */
+.Toastify {
+  position: relative;
+  z-index: 2147483647 !important;
+}
+
+/* DaisyUI Modal fix: prevent the modal from swallowing the toast click events */
+.modal {
+    z-index: 999;
+}
