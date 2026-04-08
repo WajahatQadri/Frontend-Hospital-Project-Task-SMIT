@@ -73,7 +73,7 @@ const FeaturedSpecialists = () => {
                                         {getInitial(doc.user?.name)}
                                     </div>
                                 )}
-                                <div onClick={() => navigate(`/doctor/${doc_id}`)} className="cursor-pointer absolute bottom-3 left-1/2 -translate-x-1/2 w-[90%] py-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-xl text-xs font-bold text-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div onClick={() => navigate(`/doctor/${doc._id}`)} className="cursor-pointer absolute bottom-3 left-1/2 -translate-x-1/2 w-[90%] py-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-xl text-xs font-bold text-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                                     Quick Book
                                 </div>
                             </div>
