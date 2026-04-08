@@ -58,7 +58,7 @@ const FeaturedSpecialists = () => {
                     ))
                 ) : doctors.length > 0 ? (
                     doctors.map((doc) => (
-                        <Link to={`/doctor/${doc._id}`} key={doc._id} className="group flex flex-col cursor-default">
+                        <Link to={`/doctor/${doc._id}`} key={doc._id} className="group flex flex-col">
                             {/* Image / Avatar Box */}
                             <div className="relative aspect-square mb-4 overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100">
                                 {doc.user?.avatar?.url ? (
@@ -73,9 +73,6 @@ const FeaturedSpecialists = () => {
                                         {getInitial(doc.user?.name)}
                                     </div>
                                 )}
-                                <div onClick={() => navigate(`/doctor/${doc._id}`)} className="cursor-pointer absolute bottom-3 left-1/2 -translate-x-1/2 w-[90%] py-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-xl text-xs font-bold text-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                    Quick Book
-                                </div>
                             </div>
 
                             {/* Info */}

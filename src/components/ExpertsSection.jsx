@@ -104,6 +104,7 @@ const ExpertsSection = () => {
                             </div>
                         ) : doctors.length > 0 ? (
                             doctors.map((doc) => (
+                                <Link to={`/doctor/${doc._id}`} key={doc._id} className="group flex flex-col">
                                 <div key={doc._id} className="group flex flex-col items-center lg:items-start bg-slate-50/50 p-4 rounded-[2rem] border border-transparent hover:border-blue-100 hover:bg-white hover:shadow-xl transition-all duration-300">
                                     <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100">
                                         {doc.user?.avatar?.url ? (
@@ -117,9 +118,6 @@ const ExpertsSection = () => {
                                                 {getInitial(doc.user?.name)}
                                             </div>
                                         )}
-                                        <Link to={`/doctor/${doc._id}`} className="absolute bottom-3 left-1/2 -translate-x-1/2 w-[90%] py-2 bg-white/90 backdrop-blur-sm text-blue-600 rounded-xl text-xs font-bold text-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                            Quick Book
-                                        </Link>
                                     </div>
                                     <h3 className="text-lg font-bold text-slate-800 uppercase tracking-tight">{doc.user?.name}</h3>
                                     <p className="text-blue-500 text-[10px] font-bold uppercase tracking-widest mt-1">{doc.specialization}</p>
@@ -127,6 +125,7 @@ const ExpertsSection = () => {
                                         Experience: {doc.experience}
                                     </p>
                                 </div>
+                                </Link>
                             ))
                         ) : (
                             <div className="col-span-full text-center text-slate-400 py-10 bg-slate-50 rounded-2xl">
