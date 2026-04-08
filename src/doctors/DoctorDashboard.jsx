@@ -42,7 +42,7 @@ const DoctorDashboard = () => {
 
   const logout = async () => {
     try {
-      await api.get("/users/logout-user");
+      await api.post("/users/logout");
       localStorage.removeItem("isLoggedIn");
       navigate("/");
       toast.success("Logged out");
