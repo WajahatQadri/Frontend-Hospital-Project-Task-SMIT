@@ -19,6 +19,7 @@ const Navbar = () => {
     try {
       const { data } = await api.get("/users/user-profile");
       setUser(data.user);
+      localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
       setUser(null);
       localStorage.removeItem("isLoggedIn");
@@ -38,7 +39,7 @@ const Navbar = () => {
       toast.success("Logged out successfully")
     } catch (error) {
       toast.error("Something went wrong")
-      localStorage.removeItem("IsLoggedIn")
+      localStorage.removeItem("isLoggedIn")
     }
   }
 

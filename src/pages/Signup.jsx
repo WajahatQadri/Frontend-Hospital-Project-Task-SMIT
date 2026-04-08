@@ -11,10 +11,10 @@ const Signup = () => {
 
     const formData = { name, email, password }
     const submitForm = async () => {
-        if(localStorage.getItem("isLoggedIn") === "true"){
-                        toast.info("You are alreay logged in");
-                        navigate("/profile");
-                    }
+        if (localStorage.getItem("isLoggedIn") === "true") {
+            toast.info("You are alreay logged in");
+            navigate("/profile");
+        }
         try {
             console.log(name, email, password);
             const response = await api.post("/users/register-user", formData);
