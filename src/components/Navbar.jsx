@@ -13,16 +13,20 @@ const Navbar = () => {
 
   const fetchUser = async () => {
     if (localStorage.getItem("isLoggedIn") !== "true") {
-       setUser(null);
-       return
+      setUser(null);
+      return
     }
     try {
       const { data } = await api.get("/users/user-profile");
       setUser(data.user);
       localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
-      setUser(null);
-      localStorage.removeItem("isLoggedIn");
+      if (error.response?.status === 401) {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("token");
+        setUser(null);
+      }
+      console.error("Profile check failed, but keeping session for now.");
     }
   };
 
@@ -38,14 +42,17 @@ const Navbar = () => {
       navigate("/")
       toast.success("Logged out successfully")
     } catch (error) {
-      toast.error("Something went wrong")
-      localStorage.removeItem("isLoggedIn")
+      if (error.response?.status === 401) {
+        localStorage.removeItem("isLoggedIn");
+        setUser(null);
+      }
+      console.log("CORS or Network error - session preserved locally");
     }
-  }
+  };
 
   return (
-<div className="navbar bg-white border-b border-slate-100 px-4 md:px-12 h-16 sticky top-0 z-[110]">
-       <div className="flex-1 flex items-center gap-2"> 
+    <div className="navbar bg-white border-b border-slate-100 px-4 md:px-12 h-16 sticky top-0 z-[110]">
+      <div className="flex-1 flex items-center gap-2">
         {isDashboardPage && (
           <label htmlFor="my-drawer" className="btn btn-ghost btn-sm btn-square lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-6 h-6 stroke-primary">
@@ -73,20 +80,20 @@ const Navbar = () => {
             {user ? (
               <>
                 <li className="p-3 border-b border-slate-50 mb-1 pointer-events-none flex flex-col items-start">
-                    <span className="font-black text-slate-800 text-sm uppercase">{user.name}</span>
-                    <span className="text-[10px] uppercase font-bold text-blue-600 tracking-widest">{user.role}</span>
+                  <span className="font-black text-slate-800 text-sm uppercase">{user.name}</span>
+                  <span className="text-[10px] uppercase font-bold text-blue-600 tracking-widest">{user.role}</span>
                 </li>
 
                 {user.role === "ADMIN" && <li><Link to="/admin-dashboard" className="font-bold text-blue-600 py-3">Admin Dashboard</Link></li>}
                 {user.role === "DOCTOR" && <li><Link to="/doctor-dashboard" className="font-bold text-blue-600 py-3">Doctor Dashboard</Link></li>}
                 {user.role === "PATIENT" && <li><Link to="/patient-profile" className="font-bold py-3 text-blue-600">My Medical History</Link></li>}
                 {user.role === "USER" && <li><Link to="/profile" className="font-bold py-3 text-blue-600">profile</Link></li>}
-                
+
                 <div className="divider my-0 opacity-50"></div>
                 <li><button onClick={logout} className="text-red-500 font-bold py-3">Logout</button></li>
               </>
             ) : (
-                <li><Link to="/login" className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
+              <li><Link to="/login" className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
             )}
           </ul>
         </div>
