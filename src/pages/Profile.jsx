@@ -14,12 +14,12 @@ const Profile = () => {
   const getUserProfile = async () => {
     if (localStorage.getItem("isLoggedIn") !== "true") {
        setUser(null);
-       navigate("/login")
+       navigate("/login");
+       return;
     }
     try {
       const response = await api.get(
         "/users/user-profile",
-        { withCredentials: true }
       );
       if(response.data.user.role === "DOCTOR"){
         navigate("/doctor-dashboard")

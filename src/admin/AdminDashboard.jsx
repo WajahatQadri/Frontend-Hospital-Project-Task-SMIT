@@ -13,6 +13,10 @@ const AdminDashboard = () => {
   const [imgErr, setImgErr] = React.useState(false);
 
   const getUserProfile = async () => {
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        navigate("/login");
+        return; 
+    }
     try {
       const response = await api.get(
         "/users/user-profile",

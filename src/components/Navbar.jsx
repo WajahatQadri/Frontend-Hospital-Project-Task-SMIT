@@ -12,14 +12,14 @@ const Navbar = () => {
   const isDashboardPage = location.pathname.startsWith('/admin-dashboard') || location.pathname.startsWith('/doctor-dashboard');
 
   const fetchUser = async () => {
-    if (localStorage.getItem("isLoggedIn") !== "true") {
-      setUser(null);
-      return
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
+      if (user) setUser(null);
+      return;
     }
     try {
       const { data } = await api.get("/users/user-profile");
       setUser(data.user);
-      localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
       if (error.response) {
         const status = error.response.status;
@@ -28,10 +28,12 @@ const Navbar = () => {
         if (status === 401 || message === "Please Login First") {
           localStorage.removeItem("isLoggedIn");
           setUser(null);
-          console.error("Session expired - cleared local storage");
+          // console.error("Session expired - cleared local storage");
         }
+        console.log(error.message);
+        
       } else {
-        console.error("Server is unreachable or network is slow...");
+        console.error("Server Error");
       
       }
       console.error(error.response.data.message);
