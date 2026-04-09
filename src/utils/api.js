@@ -5,7 +5,7 @@ const api = axios.create({
     ? "http://localhost:5000/api/v1"  // Your local port
     : "/api/v1",
     withCredentials : true,
-    // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 });
 
 
