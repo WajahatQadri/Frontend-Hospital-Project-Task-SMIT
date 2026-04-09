@@ -27,7 +27,6 @@ const Navbar = () => {
 
         if (status === 401 || message === "Please Login First") {
           localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("token");
           setUser(null);
           console.error("Session expired - cleared local storage");
         }
@@ -50,13 +49,12 @@ const Navbar = () => {
       console.log("API logout failed, but clearing local session anyway");
     } finally {
       localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("token");
       setUser(null);
       navigate("/");
       toast.success("Logged out successfully");
     }
   };
-
+  
   return (
     <div className="navbar bg-white border-b border-slate-100 px-4 md:px-12 h-16 sticky top-0 z-[110]">
       <div className="flex-1 flex items-center gap-2">
