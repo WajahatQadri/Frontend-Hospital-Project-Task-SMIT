@@ -22,9 +22,18 @@ const Navbar = () => {
       localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
       if (error.response) {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("token");
-        setUser(null);
+        const status = error.response.status;
+        const message = error.response.data?.message;
+
+        if (status === 401 || message === "Please Login First") {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("token");
+          setUser(null);
+          console.error("Session expired - cleared local storage");
+        }
+      } else {
+        console.error("Server is unreachable or network is slow...");
+      
       }
       console.error(error.response.data.message);
     }
@@ -37,16 +46,14 @@ const Navbar = () => {
   const logout = async () => {
     try {
       await api.post("/users/logout", {})
-      localStorage.removeItem("isLoggedIn");
-      setUser(null)
-      navigate("/")
-      toast.success("Logged out successfully")
     } catch (error) {
-      if (error.response) {
-        localStorage.removeItem("isLoggedIn");
-        setUser(null);
-      }
-      console.log(error.response.data.message);
+      console.log("API logout failed, but clearing local session anyway");
+    } finally {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("token");
+      setUser(null);
+      navigate("/");
+      toast.success("Logged out successfully");
     }
   };
 
@@ -93,7 +100,7 @@ const Navbar = () => {
                 <li><button onClick={logout} className="text-red-500 font-bold py-3">Logout</button></li>
               </>
             ) : (
-              <li><Link to="/login" className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
+              <li><Link to="/login" onClick={() => document.activeElement.blur()} className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
             )}
           </ul>
         </div>
