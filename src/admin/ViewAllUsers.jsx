@@ -12,7 +12,7 @@ const AllUsersList = () => {
             // Filter: Only show people whose role is strictly "USER"
             const filtered = data.users.filter(u => u.role === "USER");
             setUsers(filtered);
-            console.log(filtered);
+            // console.log(filtered);
             
         } catch (error)
          { toast.error("Error loading users"); }
