@@ -29,7 +29,7 @@ const AdminPatientDetails = () => {
         if (!window.confirm("CRITICAL: Are you sure you want to permanently delete this patient record? This cannot be undone.")) return;
         try {
             // Adjust endpoint based on your backend
-            await api.delete(`/patients/admin/delete-user/${id}`);
+            await api.delete(`/patients/admin/delete-patient/${id}`);
             toast.success("Patient record deleted from system");
             navigate("/admin-dashboard/view-all-patients");
         } catch (error) {
