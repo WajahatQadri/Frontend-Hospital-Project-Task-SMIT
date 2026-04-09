@@ -21,12 +21,12 @@ const Navbar = () => {
       setUser(data.user);
       localStorage.setItem("isLoggedIn", "true");
     } catch (error) {
-      if (error.response?.status === 401) {
+      if (error.response) {
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("token");
         setUser(null);
       }
-      console.error("Profile check failed, but keeping session for now.");
+      console.error(error.response.data.message);
     }
   };
 
@@ -42,11 +42,11 @@ const Navbar = () => {
       navigate("/")
       toast.success("Logged out successfully")
     } catch (error) {
-      if (error.response?.status === 401) {
+      if (error.response) {
         localStorage.removeItem("isLoggedIn");
         setUser(null);
       }
-      console.log("CORS or Network error - session preserved locally");
+      console.log(error.response.data.message);
     }
   };
 
