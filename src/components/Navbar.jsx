@@ -83,7 +83,7 @@ const Navbar = () => {
               <img alt="User profile" src={"https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"} />
             </div>
           </div>
-          <ul tabIndex="-1" className="menu menu-sm dropdown-content bg-white rounded-2xl z-1 mt-3 w-60 p-2 shadow-2xl border border-slate-100">
+          <ul onClick={() => document.activeElement.blur()} tabIndex="-1" className="menu menu-sm dropdown-content bg-white rounded-2xl z-1 mt-3 w-60 p-2 shadow-2xl border border-slate-100">
             {user ? (
               <>
                 <li className="p-3 border-b border-slate-50 mb-1 pointer-events-none flex flex-col items-start">
@@ -100,7 +100,7 @@ const Navbar = () => {
                 <li><button onClick={logout} className="text-red-500 font-bold py-3">Logout</button></li>
               </>
             ) : (
-              <li><Link to="/login" onClick={() => document.activeElement.blur()} className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
+              <li><Link to="/login" className="btn btn-primary text-white rounded-xl mx-2 my-2 btn-sm h-10">Login</Link></li>
             )}
           </ul>
         </div>
