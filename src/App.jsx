@@ -29,6 +29,7 @@ import DoctorDashboard from './doctors/DoctorDashboard'
 import UpdateDoctorProfile from './doctors/UpdateDoctorProfile'
 import MyPatients from './doctors/MyPatients'
 import ManagePatientFile from './doctors/ManagePatientFile'
+import PendingDoctorDetails from './admin/PendingDoctorDetails'
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -57,9 +58,11 @@ function App() {
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/doctor/my-patients" element={<MyPatients />} />
         <Route path="/doctor/manage-patient/:patientId" element={<ManagePatientFile />} />
+        
 
         {/* admin routes */}
         <Route path="/admin-dashboard" element={<AdminDashboard />}>
+          <Route path="pending-doctor-details/:id" element={<PendingDoctorDetails/>}/>
           <Route path="view-all-doctors" element={<ViewAllDoctors />} />
           <Route path="view-all-patients" element={<ViewAllPatients />} />
           <Route path="view-all-medicines" element={<ViewAllMedicines />} />

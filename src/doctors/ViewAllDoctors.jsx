@@ -70,7 +70,7 @@ const AllDoctorsList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {doctors.map(doc => (
                     <div key={doc._id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex justify-between items-center">
-                        <div className='cursor-pointer' onClick={() => Navigate(`/doctor/${doc._id}`)}>
+                        <div className='cursor-pointer' onClick={() => Navigate(`/admin-dashboard/pending-doctor-details/${doc._id}`)}>
                             <h3 className="font-black text-slate-800 uppercase">
                                 Dr. {doc.user?.name || "Unknown"}
                             </h3>

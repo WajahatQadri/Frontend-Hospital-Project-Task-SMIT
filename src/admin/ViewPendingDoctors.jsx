@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ViewPendingDoctors = ({ onActionSuccess }) => {
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const fetchPending = async () => {
         setLoading(true);
@@ -29,6 +32,20 @@ const ViewPendingDoctors = ({ onActionSuccess }) => {
         }
     };
 
+    const handleGetDetails = async (id) => {
+        try {
+            const data = await api.get(`/doctors/doctor/${id}`);
+            if(data){
+                navigate(`/admin-dashboard/pending-doctor-details/${id}`)
+            }
+            else{
+                toast.error("doctor Id not found");
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message)
+        }
+    }
+
     const getInitial = (name) => name ? name.charAt(0) : "?";
 
     useEffect(() => { fetchPending(); }, []);
@@ -44,12 +61,12 @@ const ViewPendingDoctors = ({ onActionSuccess }) => {
 
 
     return (
-        <div className="p-6"> 
+        <div className="p-6">
             <h2 className="text-2xl font-black text-slate-800 mb-6 italic uppercase tracking-tighter">
                 Pending Applications
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {loading ? (
                     // Loading State Skeletons
                     [1, 2, 3, 4].map((n) => (
@@ -79,22 +96,35 @@ const ViewPendingDoctors = ({ onActionSuccess }) => {
                             </div>
 
                             {/* Info Section - Bold Black Text */}
-                            <div className="space-y-2 flex-grow">
-                                <h3 className="text-xl font-black text-slate-900 uppercase leading-none">
-                                    Dr. {doc.user?.name}
-                                </h3>
-                                <p className="text-slate-600 font-bold text-sm uppercase tracking-widest">
-                                    {doc.specialization}
-                                </p>
-                                <p className="text-xs text-slate-400 font-medium italic">
-                                    Experience: {doc.experience} Years
-                                </p>
+
+                            <div
+                                className="block p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer no-underline group"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="space-y-2 flex-grow">
+                                        <h3 className="text-xl font-black text-slate-900 uppercase leading-none group-hover:text-primary transition-colors">
+                                            Dr. {doc.user?.name || "N/A"}
+                                        </h3>
+                                        <p className="text-slate-600 font-bold text-sm uppercase tracking-widest">
+                                            {doc.specialization}
+                                        </p>
+                                        <p className="text-xs text-slate-400 font-medium italic">
+                                            Experience: {doc.experience}
+                                        </p>
+                                    </div>
+                                    
+                                </div>
                             </div>
 
                             {/* Action Button */}
                             <div className="mt-6">
                                 <div className="flex gap-2 mt-4">
-                                <button onClick={() => handleApprove(doc._id)} className="btn btn-success btn-outline flex-1 font-bold rounded-xl">Approve</button>
+                                    <button onClick={() => handleGetDetails(doc._id)} className="btn btn-primary btn-outline flex-1 font-bold rounded-xl">Details</button>
+                                </div>
+                            </div>
+                            <div className="">
+                                <div className="flex gap-2 mt-4">
+                                    <button onClick={() => handleApprove(doc._id)} className="btn btn-success btn-outline flex-1 font-bold rounded-xl">Approve</button>
                                 </div>
                             </div>
                             <div className="">

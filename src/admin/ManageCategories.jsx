@@ -63,18 +63,41 @@ const ManageCategories = () => {
             {/* ADD FORM */}
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl">
                 <h2 className="text-xl font-black text-slate-800 uppercase italic mb-6">Register Master Item</h2>
-                <form onSubmit={handleAddCategory} className="flex flex-col md:flex-row gap-4">
-                    <input type="text" placeholder="NAME (E.G. SURGEON)" className="text-slate-700 input input-bordered flex-1 rounded-2xl bg-slate-50 font-bold border-none h-14" value={name} onChange={(e) => setName(e.target.value)} required />
-                    <select className="text-slate-700 select select-bordered flex-1 rounded-2xl bg-slate-50 font-bold border-none h-14 uppercase" value={label} onChange={(e) => setLabel(e.target.value)} required>
-                        <option value="">SELECT GROUP</option>
-                        <option value="SPECIALIZATION">SPECIALIZATION</option>
-                        <option value="MEDICINE_TYPE">MEDICINE_TYPE</option>
-                        <option value="DISEASE_TYPE">DISEASE_TYPE</option>
-                        <option value="GENDER">GENDER</option>
-                        <option value="BLOOD_GROUP">BLOOD_GROUP</option>
-                    </select>
-                    <button type="submit" className="btn btn-primary px-10 rounded-2xl text-white font-black uppercase h-14 border-none">Add</button>
-                </form>
+                <form onSubmit={handleAddCategory} className="flex flex-col md:flex-row items-center gap-3 w-full">
+    {/* Input Field - Slimmer height and consistent rounding */}
+    <input 
+        type="text" 
+        placeholder="NAME (E.G. SURGEON)" 
+        className="w-full md:flex-1 input input-bordered bg-slate-50 text-slate-600 text-sm font-medium h-12 rounded-xl border-slate-200 focus:outline-none focus:border-indigo-500" 
+        value={name} 
+        onChange={(e) => setName(e.target.value)} 
+        required 
+    />
+
+    {/* Select Dropdown - Removed DaisyUI extra padding conflicts */}
+    <select
+        className="w-full md:w-48 select select-bordered bg-slate-50 text-slate-700 text-sm font-bold h-12 rounded-xl border-slate-200 uppercase focus:outline-none focus:border-indigo-500"
+        value={label} 
+        onChange={(e) => setLabel(e.target.value)} 
+        required
+    >
+        <option value="" disabled>GROUP</option>
+        <option value="SPECIALIZATION">SPECIALIZATION</option>
+        <option value="MEDICINE_TYPE">MEDICINE</option>
+        <option value="DISEASE_TYPE">DISEASE</option>
+        <option value="GENDER">GENDER</option>
+        <option value="BLOOD_GROUP">BLOOD</option>
+    </select>
+
+    {/* Submit Button - Matches height exactly */}
+    <button 
+        type="submit" 
+        className="btn btn-primary w-full md:w-auto px-8 h-12 min-h-0 rounded-xl text-white text-sm font-bold uppercase border-none"
+    >
+        Add
+    </button>
+</form>
+
             </div>
 
             {/* ACCORDION LIST */}

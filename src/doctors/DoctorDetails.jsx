@@ -108,9 +108,7 @@ const DoctorDetails = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-12">
             <div className="max-w-5xl mx-auto space-y-8">
-                <Link to="/doctors" className="inline-flex items-center text-slate-400 font-bold hover:text-primary transition-colors text-sm uppercase tracking-widest">
-                    <span className="mr-2">←</span> Back to Search
-                </Link>
+                
 
                 {/* Profile Card */}
                 <div className="bg-white shadow-xl rounded-[2.5rem] border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
@@ -142,7 +140,9 @@ const DoctorDetails = () => {
                         </div>
                         <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                             <p className="text-[10px] uppercase font-black text-primary mb-1">Standard Timings</p>
-                            <p className="text-xl font-black text-slate-700 italic">{doctor?.timing?.join(" / ")}</p>
+                            <div className="flex flex-wrap gap-2">
+                            {doctor?.timing?.map((day) => <span key={day} className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs border border-slate-200">{day}</span>)}
+                        </div>
                         </div>
                     </div>
 
@@ -210,8 +210,8 @@ const DoctorDetails = () => {
                         </div>
 
                         <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                            <button type="button" className="btn flex-1 h-16 rounded-2xl font-bold uppercase" onClick={closeModal}>Discard</button>
-                            <button type="submit" className="btn btn-primary flex-[2] h-16 rounded-2xl text-white font-black uppercase tracking-widest border-none shadow-xl shadow-blue-200">Confirm Appointment</button>
+                            <button type="button" className="btn flex-1 px-4 py-2 rounded-xl border text-sm font-bold" onClick={closeModal}>Discard</button>
+                            <button type="submit" className="btn btn-primary flex-2 px-4 py-2 rounded-xl border text-sm font-bold">Confirm Appointment</button>
                         </div>
                     </form>
                 </div>
