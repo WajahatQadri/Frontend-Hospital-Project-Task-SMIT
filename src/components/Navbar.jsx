@@ -50,7 +50,7 @@ const Navbar = () => {
     } catch (error) {
       console.log("API logout failed, but clearing local session anyway");
     } finally {
-      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("isLoggedIn");``
       setUser(null);
       navigate("/");
       toast.success("Logged out successfully");
