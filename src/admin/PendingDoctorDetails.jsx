@@ -84,7 +84,7 @@ const PendingDoctorDetails = () => {
                             </div>
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Consultation Fees</label>
-                                <p className="font-black text-green-600 text-xl">PKR {doctor.fees}</p>
+                                <p className="font-black text-blue-600 text-xl">PKR {doctor.fees}</p>
                             </div>
                         </div>
                     </section>
@@ -116,7 +116,7 @@ const PendingDoctorDetails = () => {
                     {/* Section 4: Action (Admin logic) */}
                     <div className="pt-8 flex gap-4">
                         {/* Here you can add Approve/Reject buttons if the user is an admin */}
-                        <button className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
+                        <button className={`flex-1 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all ${doctor.isApproved === true ? "bg-blue-700" : "bg-red-600"}`}>
                             Status: {doctor.isApproved === true ? ("Approved") : ("Pending")}
                         </button>
                     </div>

@@ -98,7 +98,7 @@ const ViewPendingDoctors = ({ onActionSuccess }) => {
                             {/* Info Section - Bold Black Text */}
 
                             <div
-                                className="block p-6 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer no-underline group"
+                                className="block p-6 bg-white border border-slate-200 rounded-3xl shadow-xl hover:shadow-2xl transition-all no-underline group"
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="space-y-2 flex-grow">
