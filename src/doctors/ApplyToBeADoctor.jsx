@@ -15,6 +15,7 @@ const ApplyDoctor = () => {
     const [contact, setContact] = useState("");
     const [fees, setFees] = useState("");
     const [experience, setExperience] = useState("")
+    const [address, setAddress] = useState("");
     const timeOptions = ["08:00 AM - 10:00 AM", "10:00 AM - 12:00 PM", "12:00 PM - 02:00 PM", "02:00 PM - 04:00 PM", "04:00 PM - 06:00 PM", "06:00 PM - 08:00 PM", "08:00 PM - 10:00 PM", "10:00 PM - 12:00 AM"];
     const [selectedTimings, setSelectedTimings] = useState([]);
     const [selectedDays, setSelectedDays] = useState([]);
@@ -22,6 +23,34 @@ const ApplyDoctor = () => {
     // Lists for dropdowns
     const [specializationList, setSpecializationList] = useState([]);
     const daysOptions = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+    // --- NEW LOGIC STATES ---
+    const [showReqModal, setShowReqModal] = useState(false);
+    const [reqLabel, setReqLabel] = useState("");
+    const [reqName, setReqName] = useState("");
+
+    // --- DYNAMIC SELECT HANDLER ---
+    const handleSelectChange = (e, label, setter) => {
+        if (e.target.value === "REQUEST_NEW") {
+            setReqLabel(label);
+            setShowReqModal(true);
+        } else {
+            setter(e.target.value);
+        }
+    };
+
+    // --- REQUEST SUBMIT LOGIC ---
+    const handleRequestSubmit = async () => {
+        if(!reqName) return toast.warn("Please type a specialization name");
+        try {
+            await api.post("/categories/request", { name: reqName, label: reqLabel });
+            toast.info(`Request for ${reqName} sent. Please wait & keep checking your profile; Admin will update you soon.`);
+            setShowReqModal(false);
+            setReqName("");
+        } catch (error) {
+            toast.error("Request failed");
+        }
+    };
 
     // 1. Fetch User Data and Categories on Mount
     useEffect(() => {
@@ -72,7 +101,8 @@ const ApplyDoctor = () => {
                 days: selectedDays,
                 timing: selectedTimings,
                 experience,
-                hospital
+                hospital,
+                address
             };
 
             const { data } = await api.post("/doctors/doctor/apply", formData);
@@ -87,7 +117,7 @@ const ApplyDoctor = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4">
+        <div className="min-h-screen bg-slate-50 py-12 px-4 text-black">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
                 <div className="bg-primary p-8 text-center">
                     <h1 className="text-3xl font-black text-white uppercase tracking-tight">Doctor Application</h1>
@@ -124,13 +154,14 @@ const ApplyDoctor = () => {
                                 <select
                                     className="block w-full rounded-md bg-white border border-gray-300 px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm/6"
                                     value={specialization}
-                                    onChange={(e) => setSpecialization(e.target.value)}
+                                    onChange={(e) => handleSelectChange(e, "SPECIALIZATION", setSpecialization)}
                                     required
                                 >
                                     <option value="">Select Specialization</option>
                                     {specializationList.map(cat => (
                                         <option key={cat._id} value={cat.name}>{cat.name}</option>
                                     ))}
+                                    <option value="REQUEST_NEW" className="text-blue-600 font-bold">+ Not in list? Request New</option>
                                 </select>
                             </div>
                             <div className="form-control">
@@ -179,6 +210,10 @@ const ApplyDoctor = () => {
                                     onChange={(e) => setExperience(e.target.value)}
                                     required
                                 />
+                            </div>
+                            <div className="form-control md:col-span-2">
+                                <label className="label text-[11px] font-bold text-slate-400 uppercase">Home Address</label>
+                                <input type="text" placeholder="Full residential address" value={address} onChange={(e) => setAddress(e.target.value)} className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none" />
                             </div>
                         </div>
                     </div>
@@ -235,6 +270,33 @@ const ApplyDoctor = () => {
 
                 </form>
             </div>
+
+            {/* --- NEW REQUEST MODAL --- */}
+            {showReqModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl border-4 border-blue-50 text-black">
+                        <h3 className="text-xl font-black text-slate-800 uppercase italic">Request New {reqLabel}</h3>
+                        <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest leading-tight">Admin will review and add your specialty to the database.</p>
+                        
+                        <input 
+                            type="text" 
+                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200" 
+                            placeholder={`Type missing ${reqLabel.toLowerCase()} here...`}
+                            onChange={(e) => setReqName(e.target.value)}
+                        />
+                        
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
+                            <button 
+                                className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase"
+                                onClick={handleRequestSubmit}
+                            >
+                                Send Request
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

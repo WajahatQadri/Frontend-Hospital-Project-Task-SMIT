@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import api from '../utils/api';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AdminStats = () => {
     const [users, setUsers] = useState([]);
+    const [simpleUsers, setSimpleUsers] = useState([]);
     const [doctors, setDoctors] = useState([]);
     const [medicines, setMedicines] = useState([]);
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
+    const Navigate = useNavigate();
 
     const getDetails = async () => {
         try {
@@ -19,6 +22,7 @@ const AdminStats = () => {
             ]);
 
             setUsers(uRes.data.users || []);
+            setSimpleUsers(uRes.data.users.filter(u => u.role === "USER") || [])
             setMedicines(mRes.data.medicines || []); 
             setPatients(pRes.data.patients || []);
             setDoctors(dRes.data.doctors || []);
@@ -58,20 +62,24 @@ const AdminStats = () => {
             
             {/* 1. TOP STATS CARDS - Healthcare Styled */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                <div onClick={() => Navigate("/admin-dashboard/view-all-doctors")} className="cursor-pointer bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
                     <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Total Doctors</p>
                     <h2 className="text-4xl font-black text-indigo-600 mt-1 italic">{doctors.length}</h2>
                 </div>
-                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                <div onClick={() => Navigate("/admin-dashboard/view-all-patients")} className="cursor-pointer bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
                     <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Total Patients</p>
                     <h2 className="text-4xl font-black text-emerald-500 mt-1 italic">{patients.length}</h2>
                 </div>
-                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                <div onClick={() => Navigate("/admin-dashboard/view-all-medicines")} className="cursor-pointer bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
                     <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Pharmacy Stock</p>
                     <h2 className="text-4xl font-black text-rose-500 mt-1 italic">{medicines.length}</h2>
                 </div>
+                <div onClick={() => Navigate("/admin-dashboard/view-all-users")} className="cursor-pointer bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Simple Users</p>
+                    <h2 className="text-4xl font-black text-slate-900 mt-1 italic">{simpleUsers.length}</h2>
+                </div>
                 <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
-                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">System Users</p>
+                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Total Users</p>
                     <h2 className="text-4xl font-black text-slate-400 mt-1 italic">{users.length}</h2>
                 </div>
             </div>

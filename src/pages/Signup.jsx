@@ -16,7 +16,7 @@ const Signup = () => {
             navigate("/profile");
         }
         try {
-            console.log(name, email, password);
+            // console.log(name, email, password);
             const response = await api.post("/users/register-user", formData);
             toast.success("user registered successfully")
             navigate("/profile");

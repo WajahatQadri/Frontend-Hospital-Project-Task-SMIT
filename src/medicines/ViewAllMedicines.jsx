@@ -284,14 +284,14 @@ const ViewAllMedicines = () => {
             <div className="flex gap-3 pt-4">
                 <button 
                     type="button" 
-                    className="flex-1 h-12 rounded-xl font-black uppercase text-[11px] tracking-widest bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all" 
+                    className="flex-1 h-12 rounded-xl font-black uppercase text-[11px] tracking-widest bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all cursor-pointer" 
                     onClick={() => setIsModalOpen(false)}
                 >
                     Cancel
                 </button>
                 <button 
                     type="submit" 
-                    className="flex-[2] h-12 rounded-xl bg-primary text-white font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-100 hover:opacity-90 transition-all"
+                    className="flex-[2] h-12 rounded-xl bg-primary text-white font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-100 hover:opacity-90 transition-all cursor-pointer"
                 >
                     {editingMedId ? "Update Inventory" : "Confirm Stock"}
                 </button>

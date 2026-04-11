@@ -108,7 +108,7 @@ const DoctorDetails = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-12">
             <div className="max-w-5xl mx-auto space-y-8">
-                
+
 
                 {/* Profile Card */}
                 <div className="bg-white shadow-xl rounded-[2.5rem] border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
@@ -122,7 +122,8 @@ const DoctorDetails = () => {
                     <div className="p-8 md:p-12 lg:w-2/3 flex flex-col justify-center">
                         <span className="w-fit px-3 py-1 bg-primary/10 text-primary rounded-full font-bold uppercase text-[10px] tracking-widest mb-4">{doctor?.specialization}</span>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-800 uppercase tracking-tight mb-2 italic">Dr. {doctor?.user?.name}</h1>
-                        <p className="text-slate-400 font-bold text-lg mb-6">{doctor?.hospital}</p>
+                        <p className="text-slate-400 font-bold text-lg">{doctor?.hospital}</p>
+                        <p className="mt-2 text-sm font-medium text-gray-800 break-all mb-3">Location: {doctor.address}</p>
                         <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-50">
                             <div className="text-center"><p className="text-2xl font-black text-primary">{doctor?.experience}</p><p className="text-[10px] uppercase font-bold text-slate-400">Experience</p></div>
                             <div className="text-center border-x border-slate-100"><p className="text-2xl font-black text-slate-800">Rs.{doctor?.fees}</p><p className="text-[10px] uppercase font-bold text-slate-400">Fees</p></div>
@@ -141,8 +142,8 @@ const DoctorDetails = () => {
                         <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                             <p className="text-[10px] uppercase font-black text-primary mb-1">Standard Timings</p>
                             <div className="flex flex-wrap gap-2">
-                            {doctor?.timing?.map((day) => <span key={day} className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs border border-slate-200">{day}</span>)}
-                        </div>
+                                {doctor?.timing?.map((day) => <span key={day} className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs border border-slate-200">{day}</span>)}
+                            </div>
                         </div>
                     </div>
 

@@ -36,7 +36,7 @@ const ViewPendingDoctors = ({ onActionSuccess }) => {
         try {
             const data = await api.get(`/doctors/doctor/${id}`);
             if(data){
-                navigate(`/admin-dashboard/pending-doctor-details/${id}`)
+                navigate(`/admin-dashboard/doctor-details/${id}`)
             }
             else{
                 toast.error("doctor Id not found");

@@ -10,16 +10,39 @@ const PatientProfile = () => {
     const [imgErr, setImgErr] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAllHistory, setShowAllHistory] = useState(false);
+    const [notifications, setNotifications] = useState([]);
 
+    // --- NEW FEATURES FROM REGISTER PAGE ---
+    const [showReqModal, setShowReqModal] = useState(false);
+    const [reqLabel, setReqLabel] = useState("");
+    const [reqName, setReqName] = useState("");
+
+    const fetchNotifications = async () => {
+        try {
+            // This matches the route in your backend
+            const { data } = await api.get("/categories/my-requests");
+            if (data.success) {
+                // Show only APPROVED or REJECTED
+                setNotifications(data.requests.filter(r => r.status !== "PENDING"));
+            }
+        } catch (error) {
+            console.log("Notification fetch failed:", error.response?.data?.message);
+        }
+    };
+
+    const handleDismissNotification = async (id) => {
+        try {
+            await api.delete(`/categories/request/delete/${id}`);
+            setNotifications(notifications.filter(n => n._id !== id));
+        } catch (err) { toast.error("Action failed"); }
+    };
 
     const fetchProfile = async () => {
         if (localStorage.getItem("isLoggedIn") !== "true") {
-            navigate("/login")
-            setUser(null);                       
-            return
+            navigate("/login");
+            return;
         }
         try {
-            // Backend must populate: user, assigned_doctors, medicines.medicine, medicines.givenBy
             const { data } = await api.get("/patients/me");
             setProfile(data.patient);
         } catch (error) {
@@ -31,6 +54,7 @@ const PatientProfile = () => {
 
     useEffect(() => {
         fetchProfile();
+        fetchNotifications();
     }, []);
 
     const logout = async () => {
@@ -42,20 +66,72 @@ const PatientProfile = () => {
         } catch (error) { toast.error("Logout failed"); }
     };
 
-    const deletePatientSelf = async () => {
+    // Logic for Requesting New Categories (Blood Group / Disease etc)
+    const handleRequestSubmit = async () => {
+        if (!reqName) return toast.warn("Please type a name");
+        try {
+            await api.post("/categories/request", { name: reqName, label: reqLabel });
+            toast.info(`Request for ${reqName} sent. Admin will update you soon.`);
+            setShowReqModal(false);
+            setReqName("");
+        } catch (error) {
+            toast.error("Request failed");
+        }
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await api.delete("/users/delete-profile");
+            localStorage.removeItem("isLoggedIn");
+            toast.success("Account deleted");
+            navigate("/");
+        } catch (error) { toast.error("Delete failed"); }
+    };
+
+    const deleteSelfPatientMedicalProfile = async () => {
         if (!window.confirm("Remove your medical profile?")) return;
         try {
-            await api.delete("/patients/delete-profile");
+            await api.delete("/patients/delete-patient");
             toast.success("Medical profile removed");
             navigate("/profile");
         } catch (error) { toast.error("Action failed"); }
     };
 
     if (loading) return <div className="h-screen flex items-center justify-center"><span className="loading loading-spinner loading-lg text-primary"></span></div>;
-    if (!profile) return <div className="text-center p-20 font-bold text-2xl">No medical profile found.</div>;
+    if (!profile) return <div className="text-center p-20 font-bold text-2xl text-black">No medical profile found.</div>;
 
     return (
-        <div className="bg-slate-50 min-h-screen pb-20">
+        <div className="bg-slate-50 min-h-screen pb-20 text-black">
+            {/* --- NOTIFICATION BANNER (FEATURE FROM REGISTER PAGE) --- */}
+            <div className="bg-blue-600 p-4 text-center">
+                <p className="text-blue-50 text-xs font-bold uppercase tracking-widest">
+                    Patient Medical Dashboard • Always keep your profile updated for better treatment
+                </p>
+            </div>
+            {notifications.length > 0 && (
+                <div className="container mx-auto px-4 pt-6 space-y-3">
+                    {notifications.map((n) => (
+                        <div key={n._id} className={`flex items-center justify-between p-5 rounded-3xl border shadow-lg transition-all animate-in slide-in-from-top ${n.status === 'APPROVED' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-md ${n.status === 'APPROVED' ? 'bg-emerald-500' : 'bg-red-500'}`}>
+                                    {n.status === 'APPROVED' ? '✓' : '✕'}
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-1 leading-none">Category Request Status</p>
+                                    <p className="font-black text-sm">
+                                        Your request for <span className="uppercase italic">"{n.requestedName}"</span> has been <span className="underline">{n.status}</span>.
+                                    </p>
+                                    {n.adminMessage && (
+                                        <p className="text-xs mt-1 font-bold italic opacity-70">Message: {n.adminMessage}</p>
+                                    )}
+                                </div>
+                            </div>
+                            <button onClick={() => handleDismissNotification(n._id)} className="btn btn-ghost btn-circle btn-sm hover:bg-black/5 cursor-pointer text-black">✕</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <div className="max-w-6xl mx-auto py-10 px-4">
 
                 {/* --- TOP SECTION: IDENTITY & ACTIONS --- */}
@@ -66,7 +142,7 @@ const PatientProfile = () => {
                         <div className="relative px-6 pb-10 flex flex-col items-center">
                             <div className="relative -mt-16 mb-4">
                                 <div className="w-32 h-32 rounded-full border-[6px] border-white shadow-xl overflow-hidden flex items-center justify-center bg-slate-800">
-                                    {profile?.avatar?.url && !imgErr ? (
+                                    {profile?.user?.avatar?.url && !imgErr ? (
                                         <img src={profile.user.avatar.url} onError={() => setImgErr(true)} className="w-full h-full object-cover" alt="profile" />
                                     ) : (
                                         <span className="text-5xl font-black text-white select-none">{profile.user?.name?.[0]?.toUpperCase()}</span>
@@ -76,11 +152,10 @@ const PatientProfile = () => {
                             <div className="text-center w-full px-4">
                                 <h2 className="text-2xl font-black text-gray-800 capitalize tracking-tight leading-tight">{profile.user?.name}</h2>
                                 <p className="text-sm font-medium text-gray-400 break-all mt-1">{profile.user?.email}</p>
-
                             </div>
                             <div className="mt-6">
                                 <span className="px-5 py-2 rounded-xl bg-indigo-100 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] border border-indigo-100 shadow-sm">
-                                    {profile?.role}
+                                    {profile?.role || "PATIENT"}
                                 </span>
                             </div>
                         </div>
@@ -93,7 +168,7 @@ const PatientProfile = () => {
                                 Good to see you, <span className="text-primary">{profile?.user.name?.split(' ')[0]}!</span>
                             </h3>
                             <div className="flex flex-wrap gap-4">
-                                <Link to="/update-profile" className="btn btn-outline border-black rounded-xl px-8 text-black hover:text-white">Edit Profile</Link>
+                                <Link to="/update-patient-profile" className="btn btn-outline border-black rounded-xl px-8 text-black hover:text-white">Edit Profile</Link>
                                 <Link to="/update-password" className="btn btn-outline btn-primary rounded-xl px-8 hover:bg-blue-900 ">Update Password</Link>
                                 <button onClick={logout} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-800 hover:text-white ">Sign Out</button>
                                 {profile?.role !== "ADMIN" ? (
@@ -102,8 +177,8 @@ const PatientProfile = () => {
                                     </button>
                                 ) : (null)}
                                 {profile?.role === "PATIENT" ? (
-                                    <button onClick={deletePatientSelf} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-900 hover:text-white ">
-                                        Remove you self as a patient
+                                    <button onClick={deleteSelfPatientMedicalProfile} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-900 hover:text-white ">
+                                        Remove yourself as a patient
                                     </button>
                                 ) : (null)}
                                 <button className="btn btn-outline btn-primary rounded-xl px-8 hover:bg-blue-900 hover:text-white ">
@@ -115,25 +190,15 @@ const PatientProfile = () => {
                         </div>
                     </div>
 
-                    {/* 4. Custom Modal UI Logic */}
+                    {/* Delete Modal */}
                     {showDeleteModal && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                             <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4 border border-gray-100">
                                 <h3 className="text-2xl font-black text-gray-800 mb-2">Are you absolutely sure?</h3>
                                 <p className="text-gray-500 mb-8 font-medium">This action cannot be undone. This will permanently delete your account and remove your data from our servers.</p>
                                 <div className="flex gap-4">
-                                    <button
-                                        onClick={() => setShowDeleteModal(false)}
-                                        className="cursor-pointer flex-1 py-3 rounded-xl font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={confirmDelete}
-                                        className="cursor-pointer flex-1 py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-200"
-                                    >
-                                        Yes, Delete
-                                    </button>
+                                    <button onClick={() => setShowDeleteModal(false)} className="cursor-pointer flex-1 py-3 rounded-xl font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">Cancel</button>
+                                    <button onClick={confirmDelete} className="cursor-pointer flex-1 py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-200">Yes, Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -145,8 +210,17 @@ const PatientProfile = () => {
 
                     {/* 1. Personal Medical Info */}
                     <div className="space-y-6">
-                        <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-                            <h4 className="text-blue-600 font-black text-xs uppercase tracking-[0.2em] mb-6">Vital Information</h4>
+                        <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm relative">
+                            <div className="flex justify-between items-center mb-6">
+                                <h4 className="text-blue-600 font-black text-xs uppercase tracking-[0.2em]">Vital Information</h4>
+                                {/* REQUEST FEATURE ADDED HERE */}
+                                <button 
+                                    onClick={() => { setReqLabel("BLOOD_GROUP"); setShowReqModal(true); }}
+                                    className="text-[10px] font-bold text-blue-500 hover:underline uppercase"
+                                >
+                                    + Request New Blood Group
+                                </button>
+                            </div>
                             <div className="grid grid-cols-2 gap-y-6">
                                 <div><p className="text-[10px] font-bold text-slate-400 uppercase">Age</p><p className="font-bold text-slate-800">{profile.age} Years</p></div>
                                 <div><p className="text-[10px] font-bold text-slate-400 uppercase">Gender</p><p className="font-bold text-slate-800">{profile.gender}</p></div>
@@ -166,8 +240,6 @@ const PatientProfile = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {profile.assigned_doctors?.length > 0 ? profile.assigned_doctors.map((doc, i) => (
                                     <div key={i} className="group relative flex items-center justify-between p-4 bg-slate-50 hover:bg-emerald-50 rounded-[1.5rem] border border-slate-100 hover:border-emerald-200 transition-all duration-300">
-
-                                        {/* WRAPPING LINK: Redirects to doctor profile */}
                                         <Link to={`/doctor/${doc._id}`} className="flex items-center gap-3 flex-1 cursor-pointer">
                                             <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 text-emerald-600 flex items-center justify-center font-black text-sm group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                                                 {doc.user?.name?.[0] || "D"}
@@ -179,28 +251,21 @@ const PatientProfile = () => {
                                                 </p>
                                             </div>
                                         </Link>
-
-                                        {/* ACTION BUTTON: e.stopPropagation() prevents redirecting when clicking 'Cancel' */}
                                         <button
                                             onClick={async (e) => {
-                                                e.stopPropagation(); // Prevents the Link from being triggered
-                                                const docId = doc._id;
-                                                const patId = profile._id;
-                                                if (!docId) return toast.error("Doctor ID missing");
+                                                e.stopPropagation();
                                                 if (window.confirm("Cancel this medical appointment?")) {
                                                     try {
-                                                        await api.delete(`/patients/delete-appointment/${docId}/${patId}`);
+                                                        await api.delete(`/patients/delete-appointment/${doc._id}/${profile._id}`);
                                                         toast.success("Appointment Removed");
                                                         fetchProfile();
-                                                    } catch (err) {
-                                                        toast.error("Error cancelling");
-                                                    }
+                                                    } catch (err) { toast.error("Error cancelling"); }
                                                 }
                                             }}
                                             className="cursor-pointer ml-4 p-2 rounded-xl bg-white border border-slate-100 text-slate-300 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all z-10"
                                             title="Cancel Appointment"
                                         >
-                                            <svg xmlns="http://w3.org" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </button>
@@ -211,15 +276,21 @@ const PatientProfile = () => {
                                     </div>
                                 )}
                             </div>
-
                         </div>
-
                     </div>
 
                     {/* 3. Medical Visit History */}
                     <div className="bg-slate-800 text-white p-8 rounded-[2rem] shadow-xl">
                         <div className="flex justify-between items-center mb-6">
-                            <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Visit History</h4>
+                            <div className="flex flex-col">
+                                <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Visit History</h4>
+                                <button 
+                                    onClick={() => { setReqLabel("DISEASE_TYPE"); setShowReqModal(true); }}
+                                    className="text-[9px] font-bold text-slate-500 hover:text-blue-300 uppercase mt-1 text-left"
+                                >
+                                    + Request Missing Disease Type
+                                </button>
+                            </div>
                             {profile.history?.length > 3 && (
                                 <button
                                     onClick={() => setShowAllHistory(!showAllHistory)}
@@ -232,8 +303,6 @@ const PatientProfile = () => {
 
                         <div className="space-y-6">
                             {profile.history?.length > 0 ? (
-                                // 1. Sort by date (latest first) 
-                                // 2. Slice based on state (3 or all)
                                 [...profile.history]
                                     .sort((a, b) => new Date(b.treatment) - new Date(a.treatment))
                                     .slice(0, showAllHistory ? profile.history.length : 3)
@@ -256,8 +325,6 @@ const PatientProfile = () => {
                             )}
                         </div>
                     </div>
-
-
                 </div>
 
                 {/* --- BOTTOM SECTION: PRESCRIPTIONS --- */}
@@ -290,8 +357,35 @@ const PatientProfile = () => {
                     </div>
                     {profile.medicines?.length === 0 && <p className="text-center py-10 text-slate-400 italic">No prescriptions.</p>}
                 </div>
-
             </div>
+
+            {/* --- REQUEST MODAL (FEATURE FROM REGISTER PAGE) --- */}
+            {showReqModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl border-4 border-blue-50 text-black">
+                        <h3 className="text-xl font-black text-slate-800 uppercase italic">Request New {reqLabel.replace("_", " ")}</h3>
+                        <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest leading-tight">Your request will be sent to Admin for approval.</p>
+                        
+                        <input 
+                            type="text" 
+                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200" 
+                            placeholder={`Type missing name here...`}
+                            value={reqName}
+                            onChange={(e) => setReqName(e.target.value)}
+                        />
+                        
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
+                            <button 
+                                className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase"
+                                onClick={handleRequestSubmit}
+                            >
+                                Send Request
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

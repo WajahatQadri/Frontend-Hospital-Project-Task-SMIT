@@ -18,12 +18,39 @@ const RegisterPatient = () => {
     const [bloodgroup, setBloodgroup] = useState("");
     const [contact, setContact] = useState("");
     const [address, setAddress] = useState("");
-    const [disease, setDisease] = useState(""); // Selected Category
-    const [notes, setNotes] = useState("");     // Detailed Symptoms
+    const [disease, setDisease] = useState(""); 
+    const [notes, setNotes] = useState("");     
+
+    // --- NEW LOGIC STATES ---
+    const [showReqModal, setShowReqModal] = useState(false);
+    const [reqLabel, setReqLabel] = useState("");
+    const [reqName, setReqName] = useState("");
+
+    // --- DYNAMIC SELECT HANDLER ---
+    const handleSelectChange = (e, label, setter) => {
+        if (e.target.value === "REQUEST_NEW") {
+            setReqLabel(label);
+            setShowReqModal(true);
+        } else {
+            setter(e.target.value);
+        }
+    };
+
+    // --- REQUEST SUBMIT LOGIC ---
+    const handleRequestSubmit = async () => {
+        if(!reqName) return toast.warn("Please type a name");
+        try {
+            await api.post("/categories/request", { name: reqName, label: reqLabel });
+            toast.info(`Request for ${reqName} sent. Please wait & keep checking your profile; Admin will update you soon.`);
+            setShowReqModal(false);
+            setReqName("");
+        } catch (error) {
+            toast.error("Request failed");
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-            // 1. Check Login & Pre-fill
             try {
                 const userRes = await api.get("/users/user-profile");
                 setUserData({ name: userRes.data.user.name, email: userRes.data.user.email });
@@ -32,7 +59,6 @@ const RegisterPatient = () => {
                 return;
             }
 
-            // 2. Load Dropdown Lists
             try {
                 const genRes = await api.get("/categories/get-all/GENDER");
                 setGenderList(genRes.data.categories);
@@ -58,8 +84,8 @@ const RegisterPatient = () => {
                 bloodgroup,
                 contact,
                 address,
-                disease, // Sending the category name
-                notes    // Sending the specific symptoms
+                disease, 
+                notes    
             };
 
             const { data } = await api.post("/patients/register", formData);
@@ -76,7 +102,7 @@ const RegisterPatient = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4">
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden text-black">
                 
                 {/* Header */}
                 <div className="bg-blue-600 p-6 text-center">
@@ -121,9 +147,10 @@ const RegisterPatient = () => {
 
                             <div className="form-control">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Blood Group</label>
-                                <select value={bloodgroup} onChange={(e) => setBloodgroup(e.target.value)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none">
+                                <select value={bloodgroup} onChange={(e) => handleSelectChange(e, "BLOOD_GROUP", setBloodgroup)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none">
                                     <option value="">Select Blood Group</option>
                                     {bloodGroupList.map(bg => <option key={bg._id} value={bg.name}>{bg.name}</option>)}
+                                    <option value="REQUEST_NEW" className="text-blue-600 font-bold">+ Not in list? Request New</option>
                                 </select>
                             </div>
 
@@ -132,12 +159,12 @@ const RegisterPatient = () => {
                                 <input type="text" placeholder="e.g. 03XXXXXXXXX" value={contact} onChange={(e) => setContact(e.target.value)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none" />
                             </div>
 
-                            {/* DISEASE TYPE CATEGORY */}
                             <div className="form-control md:col-span-2">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Primary Health Category</label>
-                                <select value={disease} onChange={(e) => setDisease(e.target.value)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none">
+                                <select value={disease} onChange={(e) => handleSelectChange(e, "DISEASE_TYPE", setDisease)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none">
                                     <option value="">Select Category (e.g. Fever, Infection)</option>
                                     {diseaseList.map(d => <option key={d._id} value={d.name}>{d.name}</option>)}
+                                    <option value="REQUEST_NEW" className="text-blue-600 font-bold">+ Not in list? Request New</option>
                                 </select>
                             </div>
 
@@ -153,7 +180,6 @@ const RegisterPatient = () => {
                         </div>
                     </div>
 
-                    {/* Submit */}
                     <div className="pt-6">
                         <button type="submit" className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100">
                             Register Medical Profile
@@ -162,6 +188,33 @@ const RegisterPatient = () => {
 
                 </form>
             </div>
+
+            {/* --- NEW REQUEST MODAL --- */}
+            {showReqModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl border-4 border-blue-50 text-black">
+                        <h3 className="text-xl font-black text-slate-800 uppercase italic">Request New {reqLabel}</h3>
+                        <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest leading-tight">Your request will be sent to Admin for approval.</p>
+                        
+                        <input 
+                            type="text" 
+                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200" 
+                            placeholder={`Type missing ${reqLabel.toLowerCase()} here...`}
+                            onChange={(e) => setReqName(e.target.value)}
+                        />
+                        
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
+                            <button 
+                                className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase"
+                                onClick={handleRequestSubmit}
+                            >
+                                Send Request
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
