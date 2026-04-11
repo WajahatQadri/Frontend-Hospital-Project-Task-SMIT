@@ -82,9 +82,9 @@ const PendingDoctorDetails = () => {
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Address</label>
                                 <p className="text-xl font-black text-slate-900">{doctor.address}</p>
                             </div>
-                            <div>
+                            <div className="bg-slate-50 p-4 rounded-2xl">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Experience</label>
-                                <p className="font-bold text-slate-700">{doctor.experience}</p>
+                                <p className="text-xl font-black text-slate-900">{doctor.experience}</p>
                             </div>
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Consultation Fees</label>
