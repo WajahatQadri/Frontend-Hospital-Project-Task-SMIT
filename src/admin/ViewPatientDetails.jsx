@@ -72,12 +72,12 @@ const AdminPatientDetails = () => {
                     </div>
 
                     <div className="flex gap-2">
-                        <button
+                        {/* <button
                             onClick={() => window.print()}
                             className="btn btn-ghost btn-sm font-black text-slate-500"
                         >
                             PRINT FILE
-                        </button>
+                        </button> */}
                         <button
                             onClick={handleDeletePatient}
                             className="btn btn-error btn-sm px-6 text-white font-black rounded-2xl shadow-lg shadow-red-100"
