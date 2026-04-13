@@ -124,12 +124,6 @@ const DoctorDetails = () => {
                                     {getInitial(doctor?.user?.name)}
                                 </div>
                             )}
-                            {/* Mobile-only float badge */}
-                            <div className="absolute bottom-4 left-4 lg:hidden">
-                                <span className="px-3 py-1 bg-white/90 backdrop-blur text-primary rounded-full font-bold uppercase text-[9px] tracking-widest shadow-sm border border-white">
-                                    {doctor?.specialization}
-                                </span>
-                            </div>
                         </div>
 
                         {/* Content Section */}
