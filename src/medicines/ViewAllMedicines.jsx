@@ -276,7 +276,7 @@ const ViewAllMedicines = () => {
                         <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Strict Requirement</p>
                         <h5 className="text-white font-bold text-xs">Medical Expiry Date</h5>
                     </div>
-                    <input type="date" className="input input-bordered bg-white border-none font-black rounded-xl h-11 text-sm text-red-600 w-44" value={formData.expiryDate} onChange={(e) => setFormData({...formData, expiryDate: e.target.value})} required />
+                    <input type="date" className="input input-bordered bg-white border-none font-black rounded-xl h-11 text-sm text-red-600 w-44"  max="9999-12-31" value={formData.expiryDate} onChange={(e) => setFormData({...formData, expiryDate: e.target.value})} required />
                 </div>
             </div>
 

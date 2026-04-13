@@ -32,6 +32,7 @@ const MyPatients = () => {
 
     return (
         <div className="p-4">
+            <Link to="/doctor-dashboard" className="btn btn-link text-slate-400 no-underline font-bold">← Back to Home</Link>
             <h2 className="text-3xl font-black text-slate-800 uppercase italic mb-8">My Assigned Patients</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

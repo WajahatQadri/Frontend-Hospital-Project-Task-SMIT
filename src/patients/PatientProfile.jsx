@@ -45,6 +45,8 @@ const PatientProfile = () => {
         try {
             const { data } = await api.get("/patients/me");
             setProfile(data.patient);
+            // console.log(data.patient);
+
         } catch (error) {
             navigate("/profile");
         } finally {
@@ -56,6 +58,15 @@ const PatientProfile = () => {
         fetchProfile();
         fetchNotifications();
     }, []);
+
+    const updatedAt = "2026-04-13T10:40:43.754Z";
+    const formattedDate = new Date(updatedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 
     const logout = async () => {
         try {
@@ -102,6 +113,7 @@ const PatientProfile = () => {
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20 text-black">
+
             {/* --- NOTIFICATION BANNER (FEATURE FROM REGISTER PAGE) --- */}
             <div className="bg-blue-600 p-4 text-center">
                 <p className="text-blue-50 text-xs font-bold uppercase tracking-widest">
@@ -131,6 +143,8 @@ const PatientProfile = () => {
                     ))}
                 </div>
             )}
+            <Link to="/" className="btn btn-link text-slate-400 no-underline font-bold mt-4 ms-4">← Back to Home</Link>
+
 
             <div className="max-w-6xl mx-auto py-10 px-4">
 
@@ -214,7 +228,7 @@ const PatientProfile = () => {
                             <div className="flex justify-between items-center mb-6">
                                 <h4 className="text-blue-600 font-black text-xs uppercase tracking-[0.2em]">Vital Information</h4>
                                 {/* REQUEST FEATURE ADDED HERE */}
-                                <button 
+                                <button
                                     onClick={() => { setReqLabel("BLOOD_GROUP"); setShowReqModal(true); }}
                                     className="text-[10px] font-bold text-blue-500 hover:underline uppercase"
                                 >
@@ -284,12 +298,6 @@ const PatientProfile = () => {
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex flex-col">
                                 <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Visit History</h4>
-                                <button 
-                                    onClick={() => { setReqLabel("DISEASE_TYPE"); setShowReqModal(true); }}
-                                    className="text-[9px] font-bold text-slate-500 hover:text-blue-300 uppercase mt-1 text-left"
-                                >
-                                    + Request Missing Disease Type
-                                </button>
                             </div>
                             {profile.history?.length > 3 && (
                                 <button
@@ -317,7 +325,9 @@ const PatientProfile = () => {
                                                 )}
                                             </div>
                                             <h5 className="font-black text-lg text-slate-100 group-hover:text-white transition-colors">{h.disease}</h5>
+                                            <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Dr.{profile?.assigned_doctors?.[0].user?.name}</h4>
                                             <p className="text-sm text-slate-400 mt-1 leading-relaxed">{h.notes}</p>
+                                            <p className="text-sm text-slate-400 leading-relaxed">Created At : {formattedDate}</p>
                                         </div>
                                     ))
                             ) : (
@@ -365,18 +375,18 @@ const PatientProfile = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl border-4 border-blue-50 text-black">
                         <h3 className="text-xl font-black text-slate-800 uppercase italic">Request New {reqLabel.replace("_", " ")}</h3>
                         <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest leading-tight">Your request will be sent to Admin for approval.</p>
-                        
-                        <input 
-                            type="text" 
-                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200" 
+
+                        <input
+                            type="text"
+                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200"
                             placeholder={`Type missing name here...`}
                             value={reqName}
                             onChange={(e) => setReqName(e.target.value)}
                         />
-                        
+
                         <div className="flex gap-3">
                             <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
-                            <button 
+                            <button
                                 className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase"
                                 onClick={handleRequestSubmit}
                             >

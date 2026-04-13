@@ -134,6 +134,7 @@ const ManagePatientFile = () => {
     return (
         <div className="bg-slate-50 min-h-screen pb-20 text-black">
             <div className="max-w-6xl mx-auto py-10 px-4">
+                <Link to="/doctor-dashboard" className="btn btn-link text-slate-400 no-underline font-bold">← Back</Link>
 
                 {/* --- HEADER --- */}
                 <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 bg-white/50 p-4 rounded-3xl border border-slate-200 shadow-sm">

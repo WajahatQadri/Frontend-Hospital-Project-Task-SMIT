@@ -88,6 +88,8 @@ const Profile = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen text-black">
+    <Link to="/" className="btn btn-link text-slate-400 no-underline font-bold mt-4 ms-4">← Back to Home</Link>
+      
 
       {/* --- NOTIFICATION BANNERS LOGIC ADDED --- */}
       {notifications.length > 0 && (

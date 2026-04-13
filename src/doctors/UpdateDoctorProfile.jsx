@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const UpdateDoctorProfile = () => {
     const navigate = useNavigate();
@@ -121,6 +122,8 @@ const UpdateDoctorProfile = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 text-black">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                <Link to="/doctor-dashboard" className="btn btn-link text-slate-400 no-underline font-bold">← Back</Link>
+
                 <div className="bg-indigo-600 p-8 text-center text-white">
                     <h1 className="text-3xl font-black uppercase tracking-tight">Doctor Profile Update</h1>
                 </div>

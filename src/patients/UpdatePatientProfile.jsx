@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const UpdatePatientProfile = () => {
@@ -61,7 +61,7 @@ const UpdatePatientProfile = () => {
                 api.get("/patients/me")
             ]);
             // console.log(patientRes);
-            
+
             // Set User Identity
             setName(userRes.data.user.name || "");
             setEmail(userRes.data.user.email || "");
@@ -121,7 +121,8 @@ const UpdatePatientProfile = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4 text-black">
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-                
+                <Link to="/patient-profile" className="btn btn-link text-slate-400 no-underline font-bold">← Back</Link>
+
                 {/* Header */}
                 <div className="bg-slate-800 p-6 text-center">
                     <h1 className="text-2xl font-black text-white uppercase tracking-tight italic">Update Medical Record</h1>
@@ -129,29 +130,29 @@ const UpdatePatientProfile = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
-                    
+
                     {/* SECTION 1: Identity */}
                     <div className="space-y-4">
                         <h2 className="text-md font-bold text-slate-700 border-b border-slate-100 pb-2 uppercase tracking-wide">Identity Details</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="form-control">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Patient Name</label>
-                                <input 
-                                    type="text" 
-                                    value={name} 
-                                    onChange={(e) => setName(e.target.value)} 
-                                    required 
-                                    className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-slate-800 outline-none font-bold" 
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-slate-800 outline-none font-bold"
                                 />
                             </div>
                             <div className="form-control">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Email Address</label>
-                                <input 
-                                    type="email" 
-                                    value={email} 
-                                    onChange={(e) => setEmail(e.target.value)} 
-                                    required 
-                                    className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-slate-800 outline-none font-bold" 
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-slate-800 outline-none font-bold"
                                 />
                             </div>
                         </div>
@@ -161,7 +162,7 @@ const UpdatePatientProfile = () => {
                     <div className="space-y-4 pt-2">
                         <h2 className="text-md font-bold text-slate-700 border-b border-slate-100 pb-2 uppercase tracking-wide">Medical Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
+
                             <div className="form-control">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Age</label>
                                 <input type="number" value={age} onChange={(e) => setAge(e.target.value)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-slate-800 outline-none" />
@@ -225,15 +226,15 @@ const UpdatePatientProfile = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl text-black">
                         <h3 className="text-xl font-black text-slate-800 uppercase italic">Request {reqLabel.replace("_", " ")}</h3>
                         <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest mt-2">Submit to admin for approval</p>
-                        
-                        <input 
-                            type="text" 
-                            className="w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200 px-4 focus:ring-2 focus:ring-slate-800 outline-none" 
+
+                        <input
+                            type="text"
+                            className="w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200 px-4 focus:ring-2 focus:ring-slate-800 outline-none"
                             placeholder={`Type here...`}
                             value={reqName}
                             onChange={(e) => setReqName(e.target.value)}
                         />
-                        
+
                         <div className="flex gap-3">
                             <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
                             <button className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase" onClick={handleRequestSubmit}>Submit</button>

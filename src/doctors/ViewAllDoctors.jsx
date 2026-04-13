@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import ViewPendingDoctors from '../admin/ViewPendingDoctors';
 import { useNavigate } from 'react-router-dom';
 
+
 const AllDoctorsList = () => {
     const [doctors, setDoctors] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);

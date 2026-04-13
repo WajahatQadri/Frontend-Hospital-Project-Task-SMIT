@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const RegisterPatient = () => {
@@ -18,8 +18,8 @@ const RegisterPatient = () => {
     const [bloodgroup, setBloodgroup] = useState("");
     const [contact, setContact] = useState("");
     const [address, setAddress] = useState("");
-    const [disease, setDisease] = useState(""); 
-    const [notes, setNotes] = useState("");     
+    const [disease, setDisease] = useState("");
+    const [notes, setNotes] = useState("");
 
     // --- NEW LOGIC STATES ---
     const [showReqModal, setShowReqModal] = useState(false);
@@ -38,7 +38,7 @@ const RegisterPatient = () => {
 
     // --- REQUEST SUBMIT LOGIC ---
     const handleRequestSubmit = async () => {
-        if(!reqName) return toast.warn("Please type a name");
+        if (!reqName) return toast.warn("Please type a name");
         try {
             await api.post("/categories/request", { name: reqName, label: reqLabel });
             toast.info(`Request for ${reqName} sent. Please wait & keep checking your profile; Admin will update you soon.`);
@@ -84,8 +84,8 @@ const RegisterPatient = () => {
                 bloodgroup,
                 contact,
                 address,
-                disease, 
-                notes    
+                disease,
+                notes
             };
 
             const { data } = await api.post("/patients/register", formData);
@@ -93,7 +93,7 @@ const RegisterPatient = () => {
             if (data.success) {
                 toast.success("Medical Profile Created Successfully!");
                 navigate("/profile");
-                window.location.reload(); 
+                window.location.reload();
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Registration failed");
@@ -103,7 +103,8 @@ const RegisterPatient = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4">
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden text-black">
-                
+                <Link to="/profile" className="btn btn-link text-slate-400 no-underline font-bold">← Back</Link>
+
                 {/* Header */}
                 <div className="bg-blue-600 p-6 text-center">
                     <h1 className="text-2xl font-black text-white uppercase tracking-tight">Patient Medical Registration</h1>
@@ -111,7 +112,7 @@ const RegisterPatient = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-8">
-                    
+
                     {/* SECTION 1: Identity (Read Only) */}
                     <div className="space-y-4">
                         <h2 className="text-md font-bold text-slate-700 border-b border-slate-100 pb-2">Account Identity</h2>
@@ -131,7 +132,7 @@ const RegisterPatient = () => {
                     <div className="space-y-4 pt-2">
                         <h2 className="text-md font-bold text-slate-700 border-b border-slate-100 pb-2">Medical Details</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
+
                             <div className="form-control">
                                 <label className="label text-[11px] font-bold text-slate-400 uppercase">Age</label>
                                 <input type="number" placeholder="Enter age" value={age} onChange={(e) => setAge(e.target.value)} required className="block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-600 outline-none" />
@@ -195,17 +196,17 @@ const RegisterPatient = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl border-4 border-blue-50 text-black">
                         <h3 className="text-xl font-black text-slate-800 uppercase italic">Request New {reqLabel}</h3>
                         <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-widest leading-tight">Your request will be sent to Admin for approval.</p>
-                        
-                        <input 
-                            type="text" 
-                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200" 
+
+                        <input
+                            type="text"
+                            className="input input-bordered w-full h-14 rounded-2xl font-bold mb-6 bg-white border-2 border-slate-200"
                             placeholder={`Type missing ${reqLabel.toLowerCase()} here...`}
                             onChange={(e) => setReqName(e.target.value)}
                         />
-                        
+
                         <div className="flex gap-3">
                             <button onClick={() => setShowReqModal(false)} className="btn flex-1 rounded-xl font-bold">Cancel</button>
-                            <button 
+                            <button
                                 className="btn btn-primary flex-[2] text-white rounded-xl font-black uppercase"
                                 onClick={handleRequestSubmit}
                             >

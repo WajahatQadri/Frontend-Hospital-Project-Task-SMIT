@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 
@@ -108,8 +108,6 @@ const DoctorDetails = () => {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-12">
             <div className="max-w-5xl mx-auto space-y-8">
-
-
                 {/* Profile Card */}
                 <div className="max-w-5xl mx-auto px-4 sm:px-0 space-y-8">
                     {/* Profile Card */}
@@ -226,7 +224,7 @@ const DoctorDetails = () => {
                                         key={item.fullDate}
                                         type="button"
                                         onClick={() => handleDateSelect(item.fullDate)}
-                                        className={`flex-shrink-0 w-20 h-24 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1 ${selectedDate === item.fullDate
+                                        className={`cursor-pointer flex-shrink-0 w-20 h-24 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1 ${selectedDate === item.fullDate
                                             ? "bg-primary border-primary text-white shadow-lg -translate-y-1"
                                             : "bg-slate-50 border-slate-100 text-slate-500"
                                             }`}
@@ -247,7 +245,7 @@ const DoctorDetails = () => {
                                         key={index}
                                         type="button"
                                         onClick={() => handleSlotSelect(slot)}
-                                        className={`px-4 py-4 rounded-2xl border-2 text-sm font-black transition-all text-center uppercase tracking-tighter ${selectedSlot === slot
+                                        className={`cursor-pointer px-4 py-4 rounded-2xl border-2 text-sm font-black transition-all text-center uppercase tracking-tighter ${selectedSlot === slot
                                             ? "bg-primary text-white border-primary shadow-md"
                                             : "bg-white text-slate-500 border-slate-200 hover:border-primary"
                                             }`}
