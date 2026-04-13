@@ -162,7 +162,7 @@ const DoctorDashboard = () => {
             </div>
 
             {/* Location - Better Spacing */}
-            <div className="w-full mt-6 pt-6 border-t border-gray-50 text-center">
+            <div className="w-full mt-6 pt-6 border-t border-gray-300 text-center">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Clinic Location</p>
               <p className="text-sm font-semibold text-gray-700 leading-relaxed">
                 {doctorProfile?.address}
