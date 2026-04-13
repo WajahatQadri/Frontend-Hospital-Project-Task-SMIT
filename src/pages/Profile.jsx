@@ -17,11 +17,11 @@ const Profile = () => {
     try {
       const { data } = await api.get("/categories/my-requests");
       if (data.success && data.requests) {
-         // Filter to only show Approved or Rejected notifications
-         setNotifications(data.requests.filter(r => r.status !== "PENDING"));
+        // Filter to only show Approved or Rejected notifications
+        setNotifications(data.requests.filter(r => r.status !== "PENDING"));
       }
-    } catch (error) { 
-        console.error("Notification fetch error:", error); 
+    } catch (error) {
+      console.error("Notification fetch error:", error);
     }
   };
 
@@ -30,24 +30,24 @@ const Profile = () => {
       await api.delete(`/categories/request/delete/${id}`);
       // Remove from UI instantly
       setNotifications(notifications.filter(n => n._id !== id));
-    } catch (error) { 
-        toast.error("Action failed"); 
+    } catch (error) {
+      toast.error("Action failed");
     }
   };
 
   const getUserProfile = async () => {
     if (localStorage.getItem("isLoggedIn") !== "true") {
-       setUser(null);
-       navigate("/login");
-       return;
+      setUser(null);
+      navigate("/login");
+      return;
     }
     try {
       const response = await api.get("/users/user-profile");
-      
-      if(response.data.user.role === "DOCTOR"){
+
+      if (response.data.user.role === "DOCTOR") {
         navigate("/doctor-dashboard")
       }
-      if(response.data.user.role === "PATIENT"){
+      if (response.data.user.role === "PATIENT") {
         navigate("/patient-profile")
       }
       setUser(response.data.user);
@@ -88,30 +88,30 @@ const Profile = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen text-black">
-      
+
       {/* --- NOTIFICATION BANNERS LOGIC ADDED --- */}
       {notifications.length > 0 && (
-          <div className="container mx-auto px-4 pt-6 space-y-3">
-              {notifications.map((n) => (
-                  <div key={n._id} className={`flex items-center justify-between p-4 rounded-2xl border shadow-sm ${n.status === 'APPROVED' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
-                      <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${n.status === 'APPROVED' ? 'bg-emerald-500' : 'bg-red-500'}`}>
-                              {n.status === 'APPROVED' ? '✓' : '✕'}
-                          </div>
-                          <div>
-                            <p className="font-bold text-sm">
-                                Your request for <span className="uppercase italic">"{n.requestedName}"</span> has been <span className="underline">{n.status}</span>.
-                            </p>
-                            {/* Admin message displayed if present */}
-                            {n.adminMessage && (
-                                <p className="text-xs mt-1 opacity-70 italic font-medium">Message: {n.adminMessage}</p>
-                            )}
-                          </div>
-                      </div>
-                      <button onClick={() => handleDismissNotification(n._id)} className="btn btn-ghost btn-circle btn-sm hover:bg-black/5 cursor-pointer text-black">✕</button>
-                  </div>
-              ))}
-          </div>
+        <div className="container mx-auto px-4 pt-6 space-y-3">
+          {notifications.map((n) => (
+            <div key={n._id} className={`flex items-center justify-between p-4 rounded-2xl border shadow-sm ${n.status === 'APPROVED' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${n.status === 'APPROVED' ? 'bg-emerald-500' : 'bg-red-500'}`}>
+                  {n.status === 'APPROVED' ? '✓' : '✕'}
+                </div>
+                <div>
+                  <p className="font-bold text-sm">
+                    Your request for <span className="uppercase italic">"{n.requestedName}"</span> has been <span className="underline">{n.status}</span>.
+                  </p>
+                  {/* Admin message displayed if present */}
+                  {n.adminMessage && (
+                    <p className="text-xs mt-1 opacity-70 italic font-medium">Message: {n.adminMessage}</p>
+                  )}
+                </div>
+              </div>
+              <button onClick={() => handleDismissNotification(n._id)} className="btn btn-ghost btn-circle btn-sm hover:bg-black/5 cursor-pointer text-black">✕</button>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* --- EXISTING UI CONTENT --- */}
@@ -148,7 +148,7 @@ const Profile = () => {
             <div className="flex flex-wrap gap-4">
               <Link to="/update-profile" className="btn btn-outline border-black rounded-xl px-8 text-black hover:text-white">Edit Profile</Link>
               <Link to="/update-password" id="btn-update-password" className="btn btn-outline btn-primary rounded-xl px-8 hover:bg-blue-900 ">Update Password</Link>
-              <button onClick={logout} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-800 hover:text-white ">Sign Out</button>            
+              <button onClick={logout} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-800 hover:text-white ">Sign Out</button>
               {user?.role !== "ADMIN" && (
                 <button onClick={() => setShowDeleteModal(true)} className="btn btn-outline btn-error rounded-xl px-8 hover:bg-red-900 hover:text-white ">
                   Delete ID
@@ -160,6 +160,12 @@ const Profile = () => {
                   <Link to="/patient/register" className="btn btn-outline btn-primary rounded-xl px-8 hover:bg-blue-900 hover:text-white">Register as Patient</Link>
                 </>
               )}
+              {user?.role === "ADMIN" ? (
+                <Link to="/admin-dashboard" className="btn btn-outline btn-success rounded-xl px-8 hover:text-white hover:bg-green-800 ">
+                  Admin Dashboard
+                </Link>
+                ) :
+                (null)}
               <Link to="/doctors" className="btn btn-outline btn-primary rounded-xl px-8 hover:bg-blue-900 hover:text-white ">Explore Doctors</Link>
               <Link to="/" className="btn btn-outline btn-success rounded-xl px-8 hover:text-white hover:bg-green-800 ">Go to Home Page</Link>
             </div>

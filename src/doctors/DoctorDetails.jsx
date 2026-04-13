@@ -111,27 +111,81 @@ const DoctorDetails = () => {
 
 
                 {/* Profile Card */}
-                <div className="bg-white shadow-xl rounded-[2.5rem] border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
-                    <div className="w-full lg:w-1/3 aspect-square bg-slate-100">
-                        {doctor?.user?.avatar?.url ? (
-                            <img src={doctor.user.avatar.url} alt={doctor.user.name} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-primary bg-blue-50 text-8xl font-black italic">{getInitial(doctor?.user?.name)}</div>
-                        )}
-                    </div>
-                    <div className="p-8 md:p-12 lg:w-2/3 flex flex-col justify-center">
-                        <span className="w-fit px-3 py-1 bg-primary/10 text-primary rounded-full font-bold uppercase text-[10px] tracking-widest mb-4">{doctor?.specialization}</span>
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-800 uppercase tracking-tight mb-2 italic">Dr. {doctor?.user?.name}</h1>
-                        <p className="text-slate-400 font-bold text-lg">{doctor?.hospital}</p>
-                        <p className="mt-2 text-sm font-medium text-gray-800 break-all mb-3">Location: {doctor.address}</p>
-                        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-50">
-                            <div className="text-center"><p className="text-2xl font-black text-primary">{doctor?.experience}</p><p className="text-[10px] uppercase font-bold text-slate-400">Experience</p></div>
-                            <div className="text-center border-x border-slate-100"><p className="text-2xl font-black text-slate-800">Rs.{doctor?.fees}</p><p className="text-[10px] uppercase font-bold text-slate-400">Fees</p></div>
-                            <div className="text-center border-x border-slate-100"><p className="text-2xl font-black text-slate-800">{doctor?.hospital}</p><p className="text-[10px] uppercase font-bold text-slate-400">Hospital</p></div>
-                            <div className="text-center"><p className="text-2xl font-black text-emerald-600">{doctor?.patients?.length || 0}</p><p className="text-[10px] uppercase font-bold text-slate-400">Patients</p></div>
+                <div className="max-w-5xl mx-auto px-4 sm:px-0 space-y-8">
+                    {/* Profile Card */}
+                    <div className="bg-white shadow-2xl rounded-[2rem] sm:rounded-[3rem] border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
+
+                        {/* Image Section: Fixed height on mobile, square on desktop */}
+                        <div className="w-full lg:w-1/3 h-72 sm:h-96 lg:h-auto bg-slate-100 relative">
+                            {doctor?.user?.avatar?.url ? (
+                                <img src={doctor.user.avatar.url} alt={doctor.user.name} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-primary bg-blue-50 text-7xl sm:text-8xl font-black italic">
+                                    {getInitial(doctor?.user?.name)}
+                                </div>
+                            )}
+                            {/* Mobile-only float badge */}
+                            <div className="absolute bottom-4 left-4 lg:hidden">
+                                <span className="px-3 py-1 bg-white/90 backdrop-blur text-primary rounded-full font-bold uppercase text-[9px] tracking-widest shadow-sm border border-white">
+                                    {doctor?.specialization}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Content Section */}
+                        <div className="p-6 sm:p-10 lg:p-12 lg:w-2/3 flex flex-col justify-center">
+                            {/* Desktop-only badge */}
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="px-4 py-1 bg-primary text-white rounded-full font-bold uppercase text-[9px] tracking-[0.2em] shadow-lg shadow-primary/20">
+                                    {doctor?.specialization}
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified Specialist</span>
+                            </div>
+
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 uppercase tracking-tight mb-3 italic leading-tight">
+                                Dr. {doctor?.user?.name}
+                            </h1>
+
+                            {/* Contact Info: Stacks on mobile, row on tablet+ */}
+                            <div className="flex flex-wrap gap-3 mb-6">
+                                <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-2xl border border-slate-200/50">
+                                    <span className="text-[11px] font-bold text-slate-600">{doctor?.user.email}</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-2xl border border-blue-100/50">
+                                    <span className="text-[11px] font-bold text-primary">📍 {doctor.address}</span>
+                                </div>
+                            </div>
+
+                            {/* Stats Grid: 2 columns on mobile, 4 on desktop */}
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-2 pt-8 border-t border-slate-100 mt-2">
+                                <div className="text-center sm:text-left">
+                                    <p className="text-2xl font-black text-primary italic leading-none">{doctor?.experience}</p>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-tighter mt-1">Experience</p>
+                                </div>
+
+                                <div className="text-center sm:text-left sm:border-l sm:pl-6 border-slate-100">
+                                    <p className="text-2xl font-black text-slate-800 leading-none">Rs.{doctor?.fees}</p>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-tighter mt-1">Fees</p>
+                                </div>
+
+                                <div className="text-center sm:text-left sm:border-l sm:pl-6 border-slate-100">
+                                    <p className="text-lg font-black text-slate-800 leading-none uppercase truncate px-2 sm:px-0">
+                                        {doctor?.hospital}
+                                    </p>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-tighter mt-1">Hospital</p>
+                                </div>
+
+                                <div className="text-center sm:text-left sm:border-l sm:pl-6 border-slate-100">
+                                    <p className="text-2xl font-black text-emerald-600 leading-none">
+                                        {doctor?.patients?.length || 0}
+                                    </p>
+                                    <p className="text-[9px] uppercase font-black text-slate-400 tracking-tighter mt-1">Patients</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">

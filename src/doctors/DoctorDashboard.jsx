@@ -126,21 +126,68 @@ const DoctorDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="card w-full bg-white border border-gray-100 shadow-2xl rounded-[2rem] overflow-hidden">
-          <div className="h-32 bg-slate-800"></div>
-          <div className="relative px-6 pb-10 flex flex-col items-center">
+        <div className="card w-full max-w-md mx-auto bg-white border border-gray-100 shadow-2xl rounded-[2.5rem] overflow-hidden transition-all duration-300 hover:shadow-cyan-100/50 hover:-translate-y-1">
+          {/* Header Pattern/Gradient */}
+          <div className="h-32 bg-gradient-to-r from-slate-800 to-slate-900 relative">
+            <div className="absolute inset-0 opacity-10 pattern-dots"></div>
+          </div>
+
+          <div className="relative px-6 pb-8 flex flex-col items-center">
+            {/* Avatar with Ring */}
             <div className="relative -mt-16 mb-4">
-              <div className="w-32 h-32 rounded-full border-[6px] border-white shadow-xl overflow-hidden bg-primary flex items-center justify-center text-white text-5xl font-black italic">
+              <div className="w-32 h-32 rounded-full border-[6px] border-white shadow-2xl overflow-hidden bg-primary flex items-center justify-center text-white text-5xl font-black italic ring-1 ring-slate-100">
                 {user?.name?.[0]}
               </div>
+              {/* Verified Badge Placeholder */}
             </div>
-            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter italic text-center">Dr. {user?.name}</h2>
-            <p className="text-xs font-bold text-primary uppercase mt-1 tracking-widest">{doctorProfile?.specialization}</p>
-            <div className="mt-4 badge badge-outline font-black text-[10px] uppercase">{user?.role}</div>
-            <p className="mt-2 text-sm font-medium text-gray-800 break-all mt-1">Location: {doctorProfile.address}</p>
 
+            {/* Identity Section */}
+            <div className="text-center space-y-1">
+              <h2 className="text-2xl font-black text-gray-800 uppercase tracking-tighter italic">
+                Dr. {user?.name}
+              </h2>
+              <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 py-1 px-3 rounded-full inline-block">
+                {doctorProfile?.specialization}
+              </p>
+            </div>
+
+            {/* Workplace Info */}
+            <div className="flex items-center gap-2 mt-4">
+              <span className="px-3 py-1.5 bg-slate-800 text-white rounded-lg font-bold uppercase text-[10px] tracking-widest shadow-lg">
+                {doctorProfile?.hospital} Hospital
+              </span>
+              <div className="badge badge-outline border-slate-300 font-black text-[10px] uppercase h-7">
+                Role: {user?.role}
+              </div>
+            </div>
+
+            {/* Location - Better Spacing */}
+            <div className="w-full mt-6 pt-6 border-t border-gray-50 text-center">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Clinic Location</p>
+              <p className="text-sm font-semibold text-gray-700 leading-relaxed">
+                {doctorProfile?.address}
+              </p>
+            </div>
+
+            {/* Contact Info - Responsive Flex/Grid */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full mt-6">
+              <div className="flex-1 bg-slate-50 p-3 rounded-2xl flex flex-col items-center justify-center border border-slate-100 hover:bg-white transition-colors">
+                <span className="text-[9px] font-bold text-slate-400 uppercase mb-1">Email Address</span>
+                <p className="text-[11px] font-bold text-gray-800 truncate w-full text-center">
+                  {doctorProfile?.user?.email}
+                </p>
+              </div>
+
+              <div className="flex-1 bg-slate-50 p-3 rounded-2xl flex flex-col items-center justify-center border border-slate-100 hover:bg-white transition-colors">
+                <span className="text-[9px] font-bold text-slate-400 uppercase mb-1">Contact No</span>
+                <p className="text-[11px] font-bold text-gray-800">
+                  {doctorProfile?.contact}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
+
 
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-center h-full">
