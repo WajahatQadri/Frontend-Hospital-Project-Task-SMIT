@@ -217,7 +217,7 @@ const UpdateDoctorProfile = () => {
                     </div>
 
                     <div className="pt-8">
-                        <button type="submit" className="w-full h-14 bg-indigo-600 rounded-2xl text-white font-black uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100">
+                        <button type="submit" className="w-full h-14 bg-indigo-600 rounded-2xl text-white font-black uppercase tracking-widest hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100 cursor-pointer">
                             Save Profile Changes
                         </button>
                     </div>

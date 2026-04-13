@@ -30,7 +30,8 @@ const updateProfile = () => {
                     withCredentials : true,
                 }
             )
-            toast.success("User profile updated successfully")     
+            toast.success("User profile updated successfully");     
+            navigate("/profile");
 
         } catch (error) {
             toast.error("Something went wrong")   

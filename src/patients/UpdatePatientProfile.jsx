@@ -211,7 +211,7 @@ const UpdatePatientProfile = () => {
                     </div>
 
                     <div className="pt-6">
-                        <button type="submit" className="w-full bg-slate-800 text-white font-black py-4 rounded-xl hover:bg-slate-900 transition-all shadow-lg uppercase tracking-widest">
+                        <button type="submit" className="w-full bg-slate-800 text-white font-black py-4 rounded-xl hover:bg-slate-900 transition-all shadow-lg uppercase tracking-widest cursor-pointer">
                             Update Everything
                         </button>
                     </div>
