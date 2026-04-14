@@ -45,7 +45,7 @@ const PatientProfile = () => {
         try {
             const { data } = await api.get("/patients/me");
             setProfile(data.patient);
-            console.log(data.patient);
+            // console.log(data.patient);
 
         } catch (error) {
             navigate("/profile");
