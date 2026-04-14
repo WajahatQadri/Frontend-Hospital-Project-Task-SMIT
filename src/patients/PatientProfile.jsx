@@ -230,7 +230,7 @@ const PatientProfile = () => {
                                 {/* REQUEST FEATURE ADDED HERE */}
                                 <button
                                     onClick={() => { setReqLabel("BLOOD_GROUP"); setShowReqModal(true); }}
-                                    className="text-[10px] font-bold text-blue-500 hover:underline uppercase"
+                                    className="cursor-pointer text-[10px] font-bold text-blue-500 hover:underline uppercase"
                                 >
                                     + Request New Blood Group
                                 </button>

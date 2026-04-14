@@ -15,6 +15,8 @@ const VisitDetails = () => {
             try {
                 const { data } = await api.get("/patients/me");
                 setPatient(data.patient);
+                console.log(data);
+                
             } catch (err) { console.error(err); }
             finally { setLoading(false); }
         };
@@ -30,14 +32,14 @@ const VisitDetails = () => {
 
     // --- LOGIC: FIND DATA FOR THIS SPECIFIC DAY ---
     const targetDate = new Date(visitIndex).toDateString();
-    
+
     // 1. Find the Diagnosis (The history entry that is NOT "APPOINTMENT BOOKED" on that day)
-    const diagnosis = patient?.history?.find(h => 
+    const diagnosis = patient?.history?.find(h =>
         new Date(h.treatment).toDateString() === targetDate && h.disease !== "APPOINTMENT BOOKED"
     );
 
     // 2. Find the Medicines prescribed on that day
-    const medicines = patient?.medicines?.filter(m => 
+    const medicines = patient?.medicines?.filter(m =>
         new Date(m.createdAt).toDateString() === targetDate
     );
 
@@ -50,9 +52,9 @@ const VisitDetails = () => {
                 <button onClick={handlePrint} className="btn btn-primary px-8 font-black shadow-lg text-white">PRINT PRESCRIPTION</button>
             </div>
 
-            <div ref={componentRef} className="bg-white mx-auto shadow-2xl relative overflow-hidden text-black" 
-                 style={{ width: '210mm', minHeight: '297mm', padding: '0' }}>
-                
+            <div ref={componentRef} className="bg-white mx-auto shadow-2xl relative overflow-hidden text-black"
+                style={{ width: '210mm', minHeight: '297mm', padding: '0' }}>
+
                 {/* Visual Letterhead Borders */}
                 <div className="absolute top-0 left-0 w-32 h-32 bg-blue-600" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}></div>
                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-600" style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}></div>
@@ -63,11 +65,12 @@ const VisitDetails = () => {
                         <div>
                             <h1 className="text-3xl font-black text-blue-600 uppercase italic">Dr. {doctor?.user?.name || "Wajahat"}</h1>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">{doctor?.specialization || "Specialist Physician"}</p>
-                            <p className="text-[10px] font-medium text-slate-400 uppercase mt-1">{doctor?.hospital}</p>
+                            <p className="text-[10px] font-medium text-slate-400 uppercase mt-1">{doctor?.hospital} hospital</p>
                         </div>
-                        <div className="text-right">
-                            <h2 className="text-xl font-black text-slate-800 tracking-tighter">Healthcare Clinic</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medical Record System</p>
+                        <div className="">
+                            <span className="text-2xl font-black text-slate-800 tracking-tighter">
+                                Medi<span className="text-blue-600 italic">Link.</span>
+                            </span>                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medical Record System</p>
                         </div>
                     </div>
 
@@ -79,7 +82,6 @@ const VisitDetails = () => {
                         <div className="flex gap-2 pl-10"><span className="font-bold text-slate-400 uppercase text-[10px]">Blood:</span> <span className="font-black border-b border-slate-100 flex-1">{patient?.bloodgroup}</span></div>
                     </div>
 
-                    <div className="text-5xl font-black text-blue-900 italic mb-10 opacity-20">Rx</div>
 
                     {/* Diagnosis Area */}
                     <div className="mb-12">

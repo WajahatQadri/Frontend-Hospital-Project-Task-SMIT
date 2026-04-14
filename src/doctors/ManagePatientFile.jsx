@@ -200,7 +200,7 @@ const ManagePatientFile = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="font-black text-slate-800 uppercase tracking-tight text-lg italic">Clinical Update</h3>
-                            <button type="button" onClick={() => setIsAddingNewCategory(!isAddingNewCategory)} className="text-[10px] font-black text-indigo-600 hover:underline uppercase">
+                            <button type="button" onClick={() => setIsAddingNewCategory(!isAddingNewCategory)} className="cursor-pointer text-[10px] font-black text-indigo-600 hover:underline uppercase">
                                 {isAddingNewCategory ? "View List" : "+ New Category"}
                             </button>
                         </div>
@@ -211,7 +211,7 @@ const ManagePatientFile = () => {
                                     <button type="button" onClick={handleAddNewCategory} className="btn btn-primary rounded-2xl px-6">Add</button>
                                 </div>
                             ) : (
-                                <select className="select select-bordered w-full rounded-2xl font-bold bg-slate-50 border-slate-200" value={historyData.disease} onChange={handleDiseaseChange} required>
+                                <select className="cursor-pointer select select-bordered w-full rounded-2xl font-bold bg-slate-50 border-slate-200" value={historyData.disease} onChange={handleDiseaseChange} required>
                                     <option value="">Select Diagnosis</option>
                                     {diseaseList.map(d => <option key={d._id} value={d.name}>{d.name}</option>)}
                                     <option value="REQUEST_NEW" className="text-indigo-600 font-black">+ Request from Admin</option>
@@ -234,7 +234,7 @@ const ManagePatientFile = () => {
                         <form onSubmit={handlePrescribe} className="space-y-5">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest">Select Medication</label>
-                                <select className="select select-bordered w-full rounded-2xl font-bold bg-slate-800 border-slate-700 text-white" value={prescribeData.medicineId} onChange={handleMedicineChange} required>
+                                <select className="cursor-pointer select select-bordered w-full rounded-2xl font-bold bg-slate-800 border-slate-700 text-white" value={prescribeData.medicineId} onChange={handleMedicineChange} required>
                                     <option value="">Search Inventory...</option>
                                     {medicines.map(m => (
                                         <option key={m._id} value={m._id} disabled={m.stock <= 0} className={m.stock < 5 ? 'text-amber-400' : ''}>
@@ -246,7 +246,7 @@ const ManagePatientFile = () => {
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest">Dosage</label>
-                                <select className="select select-bordered w-full rounded-2xl font-bold bg-slate-800 border-slate-700 text-white" value={prescribeData.dosage} onChange={handleDosageChange} required>
+                                <select className="cursor-pointer select select-bordered w-full rounded-2xl font-bold bg-slate-800 border-slate-700 text-white" value={prescribeData.dosage} onChange={handleDosageChange} required>
                                     <option value="">Select Potency/Frequency</option>
                                     {medicines.map(m => <option key={m.potency} value={m.potency}>{m.potency}</option>)}
                                     <option value="REQUEST_NEW" className="text-indigo-400 font-black">+ Request New Dosage</option>
