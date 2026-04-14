@@ -45,7 +45,7 @@ const PatientProfile = () => {
         try {
             const { data } = await api.get("/patients/me");
             setProfile(data.patient);
-            // console.log(data.patient);
+            console.log(data.patient);
 
         } catch (error) {
             navigate("/profile");
@@ -294,79 +294,96 @@ const PatientProfile = () => {
                     </div>
 
                     {/* 3. Medical Visit History */}
+
+                    {/* --- PRESCRIPTIONS SECTION --- */}
+                    <div className="mt-12 bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
+                        <div className="bg-slate-100 p-6 border-b border-slate-200">
+                            <h4 className="text-slate-800 font-black text-xs uppercase tracking-[0.2em]">Prescriptions</h4>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="table w-full">
+                                <thead className="bg-slate-50/50">
+                                    <tr className="text-slate-400 text-[10px] uppercase">
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Issued By</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-slate-700 font-bold">
+                                    {profile.medicines?.map((item, index) => (
+                                        <tr key={index} className="hover:bg-slate-50 transition-colors">
+                                            <td className="text-blue-600">
+                                                {item.medicine?.name}
+                                                <span className="block text-[10px] text-slate-400 uppercase">{item.medicine?.potency}</span>
+                                            </td>
+                                            <td><span className="badge badge-ghost font-bold">{item.dosage}</span></td>
+                                            <td className="text-slate-500 text-xs">Dr. {item.givenBy?.user.name || "Hospital Staff"}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        {profile.medicines?.length === 0 && <p className="text-center py-10 text-slate-400 italic">No prescriptions.</p>}
+                    </div>
+                    {/* --- Appointment History Section --- */}
                     <div className="bg-slate-800 text-white p-8 rounded-[2rem] shadow-xl">
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex flex-col">
-                                <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Visit History</h4>
+                                <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Appointment History</h4>
                             </div>
-                            {profile.history?.length > 3 && (
+                            {profile.history?.filter(h => h.disease === "APPOINTMENT BOOKED").length > 3 && (
                                 <button
                                     onClick={() => setShowAllHistory(!showAllHistory)}
                                     className="cursor-pointer text-xs font-black text-blue-400 hover:text-white hover:underline uppercase tracking-wider transition-colors"
                                 >
-                                    {showAllHistory ? "Show Less" : `View All (${profile.history.length})`}
+                                    {showAllHistory ? "Show Less" : `View All (${profile.history.filter(h => h.disease === "APPOINTMENT BOOKED").length})`}
                                 </button>
                             )}
                         </div>
 
                         <div className="space-y-6">
-                            {profile.history?.length > 0 ? (
-                                [...profile.history]
+                            {profile.history?.filter(h => h.disease === "APPOINTMENT BOOKED").length > 0 ? (
+                                profile.history
+                                    .filter(h => h.disease === "APPOINTMENT BOOKED")
                                     .sort((a, b) => new Date(b.treatment) - new Date(a.treatment))
                                     .slice(0, showAllHistory ? profile.history.length : 3)
                                     .map((h, i) => (
                                         <div key={i} className="group border-l-2 border-slate-700 hover:border-blue-500 pl-4 py-1 transition-colors">
-                                            <div className="flex items-center gap-2">
-                                                <p className="text-[10px] font-bold text-blue-400 uppercase">
-                                                    {new Date(h.treatment).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
-                                                </p>
-                                                {i === 0 && (
-                                                    <span className="bg-blue-500/10 text-blue-400 text-[8px] px-2 py-0.5 rounded-full font-black border border-blue-500/20 uppercase">Latest</span>
-                                                )}
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-[10px] font-bold text-blue-400 uppercase">
+                                                        {new Date(h.treatment).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                    </p>
+                                                    {i === 0 && (
+                                                        <span className="bg-blue-500/10 text-blue-400 text-[8px] px-2 py-0.5 rounded-full font-black border border-blue-500/20 uppercase">Latest</span>
+                                                    )}
+                                                </div>
+                                                <Link
+                                                    to={`/visit-details/${profile._id}/${h.treatment}`}
+                                                    className="text-blue-500 text-[10px] font-black uppercase hover:underline tracking-widest"
+                                                >
+                                                    View Prescription →
+                                                </Link>
                                             </div>
+
                                             <h5 className="font-black text-lg text-slate-100 group-hover:text-white transition-colors">{h.disease}</h5>
-                                            <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Dr.{profile?.assigned_doctors?.[0].user?.name}</h4>
-                                            <p className="text-sm text-slate-400 mt-1 leading-relaxed">{h.notes}</p>
-                                            <p className="text-sm text-slate-400 leading-relaxed">Created At : {formattedDate}</p>
+                                            <h4 className="text-blue-400 font-black text-xs uppercase tracking-[0.2em]">Dr.{profile?.assigned_doctors?.[0]?.user?.name}</h4>
+                                            <p className="text-sm text-slate-400 mt-1 leading-relaxed italic">"{h.notes}"</p>
+                                            <p className="text-sm text-slate-400 leading-relaxed">
+                                                Created At : {new Date(h.treatment).toLocaleString()}
+                                            </p>
                                         </div>
                                     ))
                             ) : (
-                                <p className="text-slate-500 italic">No previous visits recorded.</p>
+                                <p className="text-slate-500 italic">No appointments found.</p>
                             )}
                         </div>
                     </div>
+
+
                 </div>
 
-                {/* --- BOTTOM SECTION: PRESCRIPTIONS --- */}
-                <div className="mt-12 bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
-                    <div className="bg-slate-100 p-6 border-b border-slate-200">
-                        <h4 className="text-slate-800 font-black text-xs uppercase tracking-[0.2em]">Prescriptions</h4>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="table w-full">
-                            <thead className="bg-slate-50/50">
-                                <tr className="text-slate-400 text-[10px] uppercase">
-                                    <th>Medicine</th>
-                                    <th>Dosage</th>
-                                    <th>Issued By</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-slate-700 font-bold">
-                                {profile.medicines?.map((item, index) => (
-                                    <tr key={index} className="hover:bg-slate-50 transition-colors">
-                                        <td className="text-blue-600">
-                                            {item.medicine?.name}
-                                            <span className="block text-[10px] text-slate-400 uppercase">{item.medicine?.potency}</span>
-                                        </td>
-                                        <td><span className="badge badge-ghost font-bold">{item.dosage}</span></td>
-                                        <td className="text-slate-500 text-xs">Dr. {item.givenBy?.name || "Hospital Staff"}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    {profile.medicines?.length === 0 && <p className="text-center py-10 text-slate-400 italic">No prescriptions.</p>}
-                </div>
+
             </div>
 
             {/* --- REQUEST MODAL (FEATURE FROM REGISTER PAGE) --- */}

@@ -112,7 +112,7 @@ const UpdateDoctorProfile = () => {
 
             if (userUpdateRes.success && doctorUpdateRes.success) {
                 toast.success("Profile Updated!");
-                navigate("/profile");
+                navigate("/doctor-dashboard");
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Update failed");

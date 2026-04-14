@@ -265,7 +265,52 @@ const AdminPatientDetails = () => {
                         </div>
                     </div>
                 </div>
-
+                <div className="bg-white px-5 pt-2 pb-5 rounded-[2.5rem] border border-slate-200 shadow-sm mt-5">
+                    <div className='pb-2 ps-2'>
+                        <Link to="/doctors" className="justify-self-end textarea-xs font-black text-emerald-600 uppercase tracking-tighter hover:underline">
+                            + Explore Doctors
+                        </Link>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {profile.assigned_doctors?.length > 0 ? profile.assigned_doctors.map((doc, i) => (
+                            <div key={i} className="group relative flex items-center justify-between p-4 bg-slate-50 hover:bg-emerald-50 rounded-[1.5rem] border border-slate-100 hover:border-emerald-200 transition-all duration-300">
+                                <Link to={`/doctor/${doc._id}`} className="flex items-center gap-3 flex-1 cursor-pointer">
+                                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 text-emerald-600 flex items-center justify-center font-black text-sm group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        {doc.user?.name?.[0] || "D"}
+                                    </div>
+                                    <div>
+                                        <p className="font-black text-slate-800 text-sm leading-none">Dr. {doc.user?.name}</p>
+                                        <p className="text-[9px] uppercase font-bold text-slate-400 group-hover:text-emerald-600 mt-1.5 tracking-wider">
+                                            {doc.specialization || "General Physician"}
+                                        </p>
+                                    </div>
+                                </Link>
+                                <button
+                                    onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (window.confirm("Cancel this medical appointment?")) {
+                                            try {
+                                                await api.delete(`/patients/delete-appointment/${doc._id}/${profile._id}`);
+                                                toast.success("Appointment Removed");
+                                                fetchProfile();
+                                            } catch (err) { toast.error("Error cancelling"); }
+                                        }
+                                    }}
+                                    className="cursor-pointer ml-4 p-2 rounded-xl bg-white border border-slate-100 text-slate-300 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all z-10"
+                                    title="Cancel Appointment"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )) : (
+                            <div className="col-span-full py-8 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                <p className="text-slate-400 italic text-sm font-medium">No doctors assigned to your care team yet.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

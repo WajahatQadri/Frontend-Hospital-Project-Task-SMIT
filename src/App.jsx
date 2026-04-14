@@ -30,6 +30,9 @@ import MyPatients from './doctors/MyPatients'
 import ManagePatientFile from './doctors/ManagePatientFile'
 import PendingDoctorDetails from './admin/PendingDoctorDetails'
 import UpdatePatientProfile from './patients/UpdatePatientProfile'
+import PatientsConnectedWithDoctor from './admin/PatientsConnectedWithDoctor'
+import VisitDetails from './patients/VisitDetails'
+
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,7 +62,7 @@ function App() {
         <Route path="/doctor/my-patients" element={<MyPatients />} />
         <Route path="/doctor/manage-patient/:patientId" element={<ManagePatientFile />} />
         <Route path="/update-patient-profile" element={<UpdatePatientProfile/>}/>
-        
+        <Route path="/visit-details/:patientId/:visitIndex" element={<VisitDetails />} />
 
         {/* admin routes */}
         <Route path="/admin-dashboard" element={<AdminDashboard />}>
@@ -70,6 +73,7 @@ function App() {
           <Route path="categories" element={<ManageCategories />} />
           <Route path='view-all-users' element={<ViewAllUsers />} />
           <Route path='patient-details/:id' element={<AdminPatientDetails />} />
+          <Route path="patients-connected/:id" element={<PatientsConnectedWithDoctor/>} />
         </Route>
       </Routes>
       <Footer />

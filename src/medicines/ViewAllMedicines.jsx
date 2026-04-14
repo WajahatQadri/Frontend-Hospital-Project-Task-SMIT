@@ -7,13 +7,17 @@ const ViewAllMedicines = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingMedId, setEditingMedId] = useState(null);
+    
+    // Dynamic Options State
+    const [categoryOptions, setCategoryOptions] = useState([]);
+    const [purposeOptions, setPurposeOptions] = useState([]);
 
     // Initial Form State matching your Mongoose Model
     const [formData, setFormData] = useState({
         name: "",
         company: "",
         category: "",
-        purpose: "", // We will convert this to array on submit
+        purpose: "", // Handled as string in form, converted to array on submit
         price: "",
         stock: "",
         expiryDate: "",
@@ -32,7 +36,25 @@ const ViewAllMedicines = () => {
         }
     };
 
-    useEffect(() => { fetchMedicines(); }, []);
+    // Fetch dynamic categories from Category Model
+    const fetchDropdownData = async () => {
+        try {
+            const [catRes, purpRes] = await Promise.all([
+                api.get("/categories/get-all/MEDICINE_TYPE"),
+                api.get("/categories/get-all/DISEASE_TYPE")
+            ]);
+            
+            if (catRes.data.success) setCategoryOptions(catRes.data.categories);
+            if (purpRes.data.success) setPurposeOptions(purpRes.data.categories);
+        } catch (error) {
+            console.error("Error loading categories", error);
+        }
+    };
+
+    useEffect(() => { 
+        fetchMedicines(); 
+        fetchDropdownData();
+    }, []);
 
     const handleOpenModal = (med = null) => {
         if (med) {
@@ -41,7 +63,7 @@ const ViewAllMedicines = () => {
                 name: med.name,
                 company: med.company,
                 category: med.category,
-                purpose: med.purpose.join(", "), // Convert array to string for input
+                purpose: med.purpose.join(", "), 
                 price: med.price,
                 stock: med.stock,
                 expiryDate: med.expiryDate ? med.expiryDate.split('T')[0] : "",
@@ -184,122 +206,130 @@ const ViewAllMedicines = () => {
 
             {/* --- MODAL --- */}
             <div className={`modal ${isModalOpen ? 'modal-open' : ''} pointer-events-auto px-4`}>
-    <div className="modal-box p-0 bg-white rounded-[2rem] max-w-3xl border-none shadow-2xl transition-all duration-500 max-h-[95vh] overflow-y-auto no-scrollbar">
-        
-        {/* --- COMPACT HEADER --- */}
-        <div className="bg-slate-900 px-8 py-6 text-white sticky top-0 z-50 flex justify-between items-center border-b border-white/10">
-            <div>
-                <h3 className="font-black text-xl md:text-2xl uppercase italic tracking-tight flex items-center gap-3">
-                    <span className="w-2 h-8 bg-primary rounded-full"></span>
-                    {editingMedId ? "Edit Medicine" : "Register Stock"}
-                </h3>
-                <p className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">Inventory Management</p>
+                <div className="modal-box p-0 bg-white rounded-[2rem] max-w-3xl border-none shadow-2xl transition-all duration-500 max-h-[95vh] overflow-y-auto no-scrollbar">
+                    
+                    <div className="bg-slate-900 px-8 py-6 text-white sticky top-0 z-50 flex justify-between items-center border-b border-white/10">
+                        <div>
+                            <h3 className="font-black text-xl md:text-2xl uppercase italic tracking-tight flex items-center gap-3">
+                                <span className="w-2 h-8 bg-primary rounded-full"></span>
+                                {editingMedId ? "Edit Medicine" : "Register Stock"}
+                            </h3>
+                            <p className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">Inventory Management</p>
+                        </div>
+                        <button 
+                            type="button"
+                            onClick={() => setIsModalOpen(false)} 
+                            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleFormSubmit} className="p-8 space-y-8">
+                        
+                        {/* SECTION 1: IDENTITY */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">Step 01</span>
+                                <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">General Information</h4>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Medicine Name</label>
+                                    <input type="text" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm focus:ring-0" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="e.g. Panadol" required />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Manufacturer</label>
+                                    <input type="text" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} placeholder="e.g. GSK" required />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Category</label>
+                                    <select className="select select-bordered bg-slate-50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} required>
+                                        <option value="">Select Type</option>
+                                        {categoryOptions.map((cat) => (
+                                            <option key={cat._id} value={cat.name}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Strength</label>
+                                    <input type="text" placeholder="e.g. 500mg" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.potency} onChange={(e) => setFormData({...formData, potency: e.target.value})} required />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Primary Usage</label>
+                                    <select 
+                                        className="select select-bordered bg-slate-50 border-slate-200 font-bold rounded-xl h-11 text-sm" 
+                                        value={formData.purpose} 
+                                        onChange={(e) => setFormData({...formData, purpose: e.target.value})} 
+                                        required
+                                    >
+                                        <option value="">Select Purpose</option>
+                                        {purposeOptions.map((purp) => (
+                                            <option key={purp._id} value={purp.name}>{purp.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SECTION 2: INVENTORY & STATUS */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">Step 02</span>
+                                <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Inventory & Compliance</h4>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Price (PKR)</label>
+                                    <input type="number" className="input input-bordered bg-emerald-50/30 border-emerald-100 text-emerald-700 font-black rounded-xl h-11 text-sm" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} required />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Stock Qty</label>
+                                    <input type="number" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} required />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Market Status</label>
+                                    <select className="select select-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-[11px] uppercase" value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} required>
+                                        <option value="Available">Available</option>
+                                        <option value="Out of Stock">Out of Stock</option>
+                                        <option value="Discontinued">Discontinued</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-900 rounded-2xl p-5 flex items-center justify-between">
+                                <div>
+                                    <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Strict Requirement</p>
+                                    <h5 className="text-white font-bold text-xs">Medical Expiry Date</h5>
+                                </div>
+                                <input type="date" className="input input-bordered bg-white border-none font-black rounded-xl h-11 text-sm text-red-600 w-44"  max="9999-12-31" value={formData.expiryDate} onChange={(e) => setFormData({...formData, expiryDate: e.target.value})} required />
+                            </div>
+                        </div>
+
+                        {/* ACTION BUTTONS */}
+                        <div className="flex gap-3 pt-4">
+                            <button 
+                                type="button" 
+                                className="flex-1 h-12 rounded-xl font-black uppercase text-[11px] tracking-widest bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all cursor-pointer" 
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                type="submit" 
+                                className="flex-[2] h-12 rounded-xl bg-primary text-white font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-100 hover:opacity-90 transition-all cursor-pointer"
+                            >
+                                {editingMedId ? "Update Inventory" : "Confirm Stock"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div className="modal-backdrop bg-slate-900/60 backdrop-blur-md" onClick={() => setIsModalOpen(false)}></div>
             </div>
-            <button 
-                type="button"
-                onClick={() => setIsModalOpen(false)} 
-                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-
-        <form onSubmit={handleFormSubmit} className="p-8 space-y-8">
-            
-            {/* SECTION 1: IDENTITY */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">Step 01</span>
-                    <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">General Information</h4>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Medicine Name</label>
-                        <input type="text" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm focus:ring-0" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="e.g. Panadol" required />
-                    </div>
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Manufacturer</label>
-                        <input type="text" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} placeholder="e.g. GSK" required />
-                    </div>
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Category</label>
-                        <select className="select select-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} required>
-                            <option value="">Select Type</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Syrup">Syrup</option>
-                            <option value="Injection">Injection</option>
-                            <option value="Capsule">Capsule</option>
-                        </select>
-                    </div>
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Strength</label>
-                        <input type="text" placeholder="e.g. 500mg" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.potency} onChange={(e) => setFormData({...formData, potency: e.target.value})} required />
-                    </div>
-                    <div className="form-control md:col-span-2">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Primary Usage</label>
-                        <input type="text" placeholder="e.g. Fever, Pain Relief (Comma separated)" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.purpose} onChange={(e) => setFormData({...formData, purpose: e.target.value})} required />
-                    </div>
-                </div>
-            </div>
-
-            {/* SECTION 2: INVENTORY & STATUS */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-md">Step 02</span>
-                    <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Inventory & Compliance</h4>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Price (PKR)</label>
-                        <input type="number" className="input input-bordered bg-emerald-50/30 border-emerald-100 text-emerald-700 font-black rounded-xl h-11 text-sm" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} required />
-                    </div>
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Stock Qty</label>
-                        <input type="number" className="input input-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-sm" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} required />
-                    </div>
-                    <div className="form-control">
-                        <label className="label-text text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Market Status</label>
-                        <select className="select select-bordered bg-slate-50/50 border-slate-200 font-bold rounded-xl h-11 text-[11px] uppercase" value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} required>
-                            <option value="Available">Available</option>
-                            <option value="Out of Stock">Out of Stock</option>
-                            <option value="Discontinued">Discontinued</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div className="bg-slate-900 rounded-2xl p-5 flex items-center justify-between">
-                    <div>
-                        <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Strict Requirement</p>
-                        <h5 className="text-white font-bold text-xs">Medical Expiry Date</h5>
-                    </div>
-                    <input type="date" className="input input-bordered bg-white border-none font-black rounded-xl h-11 text-sm text-red-600 w-44"  max="9999-12-31" value={formData.expiryDate} onChange={(e) => setFormData({...formData, expiryDate: e.target.value})} required />
-                </div>
-            </div>
-
-            {/* ACTION BUTTONS */}
-            <div className="flex gap-3 pt-4">
-                <button 
-                    type="button" 
-                    className="flex-1 h-12 rounded-xl font-black uppercase text-[11px] tracking-widest bg-slate-100 text-slate-500 hover:bg-slate-200 transition-all cursor-pointer" 
-                    onClick={() => setIsModalOpen(false)}
-                >
-                    Cancel
-                </button>
-                <button 
-                    type="submit" 
-                    className="flex-[2] h-12 rounded-xl bg-primary text-white font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-100 hover:opacity-90 transition-all cursor-pointer"
-                >
-                    {editingMedId ? "Update Inventory" : "Confirm Stock"}
-                </button>
-            </div>
-        </form>
-    </div>
-    <div className="modal-backdrop bg-slate-900/60 backdrop-blur-md" onClick={() => setIsModalOpen(false)}></div>
-</div>
         </div>
     );
 };

@@ -15,7 +15,7 @@ const PendingDoctorDetails = () => {
             try {
                 // Adjust this endpoint based on your backend
                 const { data } = await api.get(`/doctors/doctor/${id}`);
-                // console.log(data);
+                console.log(data);
                 
                 if (data.success) {
                     setDoctor(data.doctor);
@@ -35,7 +35,7 @@ const PendingDoctorDetails = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-8 pt-5 px-4">
-            <Link to="/admin-dashboard/view-all-doctors" className="inline-flex items-center text-slate-400 font-bold hover:text-primary transition-colors text-sm uppercase tracking-widest mb-5">
+            <Link to="/admin-dashboard/view-all-doctors" className="inline-flex items-center text-slate-400 font-bold hover:text-primary transition-colors text-sm uppercase tracking-widest mb-5 ms-3">
                 <span className="mr-2">←</span> Back
             </Link>
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
@@ -86,6 +86,11 @@ const PendingDoctorDetails = () => {
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Experience</label>
                                 <p className="text-xl font-black text-slate-900">{doctor.experience}</p>
                             </div>
+                            {doctor.isApproved === true ? (<div className="cursor-pointer bg-slate-50 p-4 rounded-2xl">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase">Patients Assigned</label>
+                                <p onClick={() => navigate(`/admin-dashboard/patients-connected/${doctor._id}`)} className="text-xl font-black text-slate-900">{doctor.patients.length}</p>
+                            </div>) : (null)}
+                            
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Consultation Fees</label>
                                 <p className="font-black text-blue-600 text-xl">PKR {doctor.fees}</p>
