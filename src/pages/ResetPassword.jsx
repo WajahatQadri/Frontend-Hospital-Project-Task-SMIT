@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
-import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState("")
