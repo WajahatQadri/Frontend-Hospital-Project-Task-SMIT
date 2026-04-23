@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const { token } = useParams();
+    const navigate = useNavigate();
     const submitForm = async () => {
         try {
             const response = await api.post(`/users/reset-password/${token}`, {password , confirmPassword})
-            toast.success(response.data.message || "Password reset successful")
+            toast.success(response.data.message || "Password reset successful");
+            navigate("/profile")
         } catch (error) {
             toast.error(error.response.data.message)
         }
