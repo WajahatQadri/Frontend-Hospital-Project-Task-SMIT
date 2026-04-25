@@ -186,7 +186,7 @@ const DoctorDashboard = () => {
       <div className="mb-8">
         <h3 className="text-3xl font-black text-slate-800 tracking-tighter">
           Welcome back, <br />
-          <span className="text-primary italic">Dr. {user?.name?.split(' ')[0]}</span>
+          <span className="text-primary italic">Dr. {user?.name}</span>
         </h3>
         <p className="text-slate-400 text-sm font-medium mt-2">Manage your practice and profile from here.</p>
       </div>
